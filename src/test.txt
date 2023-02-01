@@ -1,0 +1,141 @@
+
+ ********** Program main_Model starting ************** 
+
+
+ ***************************************
+ Starting: set_filename()
+
+   Filename : hollowvase.igs                                                                                      
+
+ Completed: set_filename()
+ ***************************************
+
+ ***************************************
+ Starting: get_num_records
+
+ Total number of records:          134
+
+ Completed: get_num_records
+ ***************************************
+
+ ***************************************
+ Starting: open_file_Data_Format(this)
+
+   Filename opened: hollowvase.igs                                                                                                                                                                                          
+   The assigned fileunit:         -10
+
+ Completed: open_file_Data_Format(this)
+ ***************************************
+
+ ***************************************
+ Starting: read_T_section_Iges()
+
+ Completed: read_T_section_Iges()
+ ***************************************
+
+ ***************************************
+ Starting: read_Start_data(this)
+
+
+ SolidWorks IGES file using NURBS representation for surfaces                                                                                                                                                                                                                                                                                                                                                    
+ Completed: read_Start_data(this)
+ ***************************************
+
+ ***************************************
+ Starting: read_Global_data(this)
+
+ 1H,,1H;,18Hhollowvase3.SLDPRT,107HC:\Users\89498\Dropbox\Research\Hidac\fortran_HiDAC\Hidac_Code_Quadratic_Projection\IGSdata\hollowvase3.IGS,15HSolidWorks 2018,15HSolidWorks 2018,32,308,15,308,15,18Hhollowvase3.SLDPRT,1.,2,2HMM,50,0.125,13H200923.131747,1E-08,499990.,5H89498,,11,0,13H200923.131747;                                                                                                    
+
+ Completed: read_Global_data(this)
+ ***************************************
+
+ Allocated memory for
+
+                  46 entities
+
+ Entity allocation complete
+
+ Allocated memory for
+
+                  46 Parameter entries
+
+ Entity allocation complete
+
+ ***************************************
+ Starting: read_attributes_Entity(this)
+
+         314           1           0           0           0           0           0           0         200           1         314           0           6           1           0           0           0           0           0           2
+         128           2           0           0           0           0           0           0     1010000           3         128           0           0          20           0           0           0           0           0           4
+         126          22           0           0           0           0           0           0     1010000           5         126           0           0           5           0           0           0           0           0           6
+         141          27           0           0           0           0           0           0       10000           7         141           0           0           1           0           0           0           0           0           8
+         126          28           0           0           0           0           0           0     1010000           9         126           0           0           4           0           0           0           0           0          10
+         141          32           0           0           0           0           0           0       10000          11         141           0           0           1           0           0           0           0           0          12
+         143          33           0           0           0           0           0           0           0          13         143           0          -1           1           0           0           0           0           0          14
+          13
+
+ T143_indices_array :          13
+ n_array_elements   :           1
+         128          34           0           0           0           0           0           0     1010000          15         128           0           0           3           0           0           0           0           0          16
+         141          37           0           0           0           0           0           0       10000          17         141           0           0           1           0           0           0           0           0          18
+         143          38           0           0           0           0           0           0           0          19         143           0          -1           1           0           0           0           0           0          20
+          13          19
+
+ T143_indices_array :          13          19
+ n_array_elements   :           2
+         128          39           0           0           0           0           0           0     1010000          21         128           0           0           3           0           0           0           0           0          22
+         126          42           0           0           0           0           0           0     1010000          23         126           0           0           5           0           0           0           0           0          24
+         141          47           0           0           0           0           0           0       10000          25         141           0           0           1           0           0           0           0           0          26
+         143          48           0           0           0           0           0           0           0          27         143           0          -1           1           0           0           0           0           0          28
+          13          19          27
+
+ T143_indices_array :          13          19          27
+ n_array_elements   :           3
+         128          49           0           0           0           0           0           0     1010000          29         128           0           0          20           0           0           0           0           0          30
+         126          69           0           0           0           0           0           0     1010000          31         126           0           0           4           0           0           0           0           0          32
+         141          73           0           0           0           0           0           0       10000          33         141           0           0           1           0           0           0           0           0          34
+         141          74           0           0           0           0           0           0       10000          35         141           0           0           1           0           0           0           0           0          36
+         143          75           0           0           0           0           0           0           0          37         143           0          -1           1           0           0           0           0           0          38
+          13          19          27          37
+
+ T143_indices_array :          13          19          27          37
+ n_array_elements   :           4
+         128          76           0           0           0           0           0           0     1010000          39         128           0           0           3           0           0           0           0           0          40
+         141          79           0           0           0           0           0           0       10000          41         141           0           0           1           0           0           0           0           0          42
+         141          80           0           0           0           0           0           0       10000          43         141           0           0           1           0           0           0           0           0          44
+         143          81           0           0           0           0           0           0           0          45         143           0          -1           1           0           0           0           0           0          46
+          13          19          27          37          45
+
+ T143_indices_array :          13          19          27          37          45
+ n_array_elements   :           5
+ Read in          23 entities
+
+ Completed: read_attributes_Entity(this)
+ ***************************************
+
+ ***************************************
+ Starting: read_PD_Entity(this)
+
+
+ i :           1
+ Parameter type to read in is 143, continuing...
+           0           3           2           7          11
+
+ i :           2
+ Parameter type to read in is 143, continuing...
+           0          15           1          17
+
+ i :           3
+ Parameter type to read in is 143, continuing...
+           0          21           1          25
+
+ i :           4
+ Parameter type to read in is 143, continuing...
+           0          29           2          33          35
+
+ i :           5
+ Parameter type to read in is 143, continuing...
+           0          39           2          41          43
+ Read in parametric data for            2 Entities
+
+ Completed: read_PD_Entity(this)
+ ***************************************
