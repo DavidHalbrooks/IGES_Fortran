@@ -15,7 +15,7 @@ CFLAGS += -fPIC -fmax-errors=3 -fcheck=all -fbacktrace
 CFLAGS += -g
 
 # Root filenames
-BASE_NAME =Model
+BASE_NAME = Model
 
 # Source Files (order matters)
 SRCS = mod_open_close mod_num_records mod_filename  \

@@ -69,7 +69,7 @@ contains
     type(T143) :: T143_Data
     print *
     write(*,*) '***************************************'
-    write(*,*) 'Starting: read_PD_Entity(this)'
+    write(*,*) 'Starting: build_T143_objects(this)'
     print *
     do i=1, this%n_elements_T143_array
       print *
@@ -83,7 +83,7 @@ contains
     end do
     write(*,*) 'Read in parametric data for ', (i-1), 'Entities'
     print *
-    write(*,*) 'Completed: read_PD_Entity(this)'
+    write(*,*) 'Completed: build_T143_objects(this)'
     write(*,*) '***************************************'
   end subroutine build_T143_objects
 
