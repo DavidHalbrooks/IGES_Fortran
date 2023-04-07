@@ -61,9 +61,6 @@ contains
     integer,intent(inout) :: num_record_start
     call read_raw(this, fileunit, n_PD_records, num_record_start)
     call all_subs_T143(this%T143_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
-    write(*,*) 'mod_PD_import.f90, import_T143_data Above'
-    write(*,*) this%T143_Data%Type_BS, this%T143_data%SPTR, this%T143_Data%N, this%T143_Data%BDPT
-    write(*,*) 'mod_PD_import.f90, import_T143_data Below'
   end subroutine import_T143_data
 
   subroutine import_T126_data(this)

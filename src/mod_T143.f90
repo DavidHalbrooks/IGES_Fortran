@@ -40,7 +40,7 @@ contains
       this%Raw_Parameter_Data = Raw_Parameter_Data
       this%Type_ID            = Type_ID
       call read_raw_data_T143(this)
-      call test_type_T143(this)
+      !call test_type_T143(this)
       call index_calcs_T143(this)
       call allocate_init_T143(this)
       call read_BDPT_data_T143(this)

@@ -61,31 +61,35 @@ contains
     allocate(this%T143_object(this%n_elements_T143_array))
   end subroutine alloc_T143_objects
 
+
   subroutine build_T143_objects(this)
     class(Entity) :: this
     integer :: i
     integer :: n_PD_records
     integer :: index_PD_record_start
     type(T143) :: T143_Data
-    print *
-    write(*,*) '***************************************'
-    write(*,*) 'Starting: build_T143_objects(this)'
+    print *, '***************************************'
+    print *, 'Starting: build_T143_objects(this)'
     print *
     do i=1, this%n_elements_T143_array
-      print *
-      write(*,*) 'i :', i
+      print *, 'Processing T143 object:', i
       n_PD_records = this%ED(this%T143_indices_array(i))%param_line_count
       index_PD_record_start = this%n_records_S + this%n_records_G + &
                             this%n_records_D + &
                             this%ED(this%T143_indices_array(i))%parameter_data
       call import_T143_data(this%PD(i), this%fileunit, &
                      n_PD_records, index_PD_record_start)
+      T143_Data = this%PD(i)%T143_Data
+      write(*,*) T143_Data%Type_BS, T143_Data%SPTR, T143_Data%N, T143_Data%BDPT
+      !write(*,*) 'T143 Data for object:', i, ':', T143_Data%Type_BS, T143_Data%SPTR, T143_Data%N, T143_Data%BDPT
+      print *
     end do
-    write(*,*) 'Read in parametric data for ', (i-1), 'Entities'
+    write(*,*) 'Read in parametric data for ', i-1, 'Entities'
     print *
     write(*,*) 'Completed: build_T143_objects(this)'
-    write(*,*) '***************************************'
+    print *, '***************************************'
   end subroutine build_T143_objects
+
 
 !  subroutine read_PD_Entity(this)
 !    class(Entity) :: this
