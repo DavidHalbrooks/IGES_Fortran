@@ -15,7 +15,7 @@ contains
     filename = 'hollowvase.igs'  ! Iges filename to open
     filename = trim(filename)
     write(*,*) '  Filename : ', filename
-    print *
+    !print *
     write(*,*) 'Completed: set_filename()'
     write(*,*) '***************************************'
   end function set_filename

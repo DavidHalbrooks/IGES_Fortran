@@ -16,7 +16,7 @@ contains
       temp(1:size(array)) = array
       call move_alloc(temp,array)
       array(size(array)) = index_to_add
-      write(*,*) array
+!      write(*,*) array
     else
       allocate(array(1))
       array = 0

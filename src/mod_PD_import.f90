@@ -75,8 +75,12 @@ contains
     write(*,*) this%T126_Data%V
   end subroutine import_T126_data
 
-  subroutine import_T128_data(this)
+  subroutine import_T128_data(this, fileunit, n_PD_records, num_record_start)
     class(Parametric) :: this
+    integer,intent(inout) :: fileunit
+    integer,intent(inout) :: n_PD_records
+    integer,intent(inout) :: num_record_start
+    call read_raw(this, fileunit, n_PD_records, num_record_start)
     call all_subs_T128(this%T128_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
     write(*,*) this%T128_Data%S
     write(*,*) this%T128_Data%T

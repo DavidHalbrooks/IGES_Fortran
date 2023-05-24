@@ -64,25 +64,49 @@ contains
 
   subroutine build_T143_objects(this)
     class(Entity) :: this
-    integer :: i
-    integer :: n_PD_records
-    integer :: index_PD_record_start
+    integer :: i, j
+    integer :: n_PD_143_records
+    integer :: n_PD_128_records
+    integer :: n_PD_141_records
+    integer :: n_PD_126_records
+    integer :: PD_ptr
+    integer :: initial_PD_start_index
+    integer :: initial_DE_start_index
+    integer :: index_PD_record_start_T143
+    integer :: index_PD_record_start_T128
     type(T143) :: T143_Data
+    type(T128) :: T128_Data
+    type(T141) :: T141_Data
+    type(T126) :: T126_Data
     print *, '***************************************'
     print *, 'Starting: build_T143_objects(this)'
     print *
     do i=1, this%n_elements_T143_array
       print *, 'Processing T143 object:', i
-      n_PD_records = this%ED(this%T143_indices_array(i))%param_line_count
-      index_PD_record_start = this%n_records_S + this%n_records_G + &
-                            this%n_records_D + &
-                            this%ED(this%T143_indices_array(i))%parameter_data
+      n_PD_143_records = this%ED(this%T143_indices_array(i))%param_line_count
+      initial_PD_start_index = this%n_records_S + &
+                               this%n_records_G + &
+                               this%n_records_D
+      initial_DE_start_index = this%n_records_S + &
+                               this%n_records_G
+      index_PD_record_start_T143 = initial_PD_start_index + &
+                    this%ED(this%T143_indices_array(i))%parameter_data
       call import_T143_data(this%PD(i), this%fileunit, &
-                     n_PD_records, index_PD_record_start)
+                     n_PD_143_records, index_PD_record_start_T143)
       T143_Data = this%PD(i)%T143_Data
       write(*,*) T143_Data%Type_BS, T143_Data%SPTR, T143_Data%N, T143_Data%BDPT
-      !write(*,*) 'T143 Data for object:', i, ':', T143_Data%Type_BS, T143_Data%SPTR, T143_Data%N, T143_Data%BDPT
       print *
+      index_PD_record_start_T128 = initial_PD_start_index + &
+                   T143_Data%SPTR
+      n_PD_126_records = this%ED(T143_Data%SPTR)%param_line_count
+      PD_ptr = this%ED(T143_Data%SPTR)%parameter_data
+      write(*,*) '  A', this%PD(this%ED(T143_Data%
+      write(*,*) '  B', this%fileunit
+      write(*,*) '  C', n_PD_126_records
+      write(*,*) '  D', index_PD_record_start_T128
+      write(*,*) '  E', size(this%ED)
+!      call import_T128_Data(this%ED(T143_Data%SPTR), this%fileunit, &
+!                   this%ED(14), index_PD_record_start_T128)
     end do
     write(*,*) 'Read in parametric data for ', i-1, 'Entities'
     print *
@@ -159,13 +183,13 @@ contains
     print *
     write(*,*) '***************************************'
     write(*,*) 'Starting: read_Start_data(this)'
-    print *
     num_record_start = this%n_records_S
       call read_S_data(this%Start_Data, this%fileunit, &
                                   this%n_records_S)
       num_record_start = num_record_start + 2
     print *
     write(*,*) this%Start_Data
+    print *
     write(*,*) 'Completed: read_Start_data(this)'
     write(*,*) '***************************************'
   end subroutine read_Start_data
@@ -201,17 +225,18 @@ contains
       call read_entity_Attributes(this%ED(i), this%fileunit, &
                                   num_record_start)
       num_record_start = num_record_start + 2
-      write(*,*) this%ED(i)
+!      write(*,*) this%ED(i)
       if (this%ED(i)%entity_type_num == 143) then
         call resize_array(this%T143_indices_array, &
                           this%n_elements_T143_array,   &
                           this%ED(i)%sequence_num1)
-        print *
-        write(*,*) 'T143_indices_array :', this%T143_indices_array
-        write(*,*) 'n_array_elements   :', this%n_elements_T143_array
+!        print *
+!        write(*,*) 'T143_indices_array :', this%T143_indices_array
+!        write(*,*) 'n_array_elements   :', this%n_elements_T143_array
       end if
     end do
-    write(*,*) 'Read in', (i-1)/2, 'entities'
+    write(*,*) '  Read in', (i-1)/2, 'total entities from DE data'
+    write(*,*) '  Read in', this%n_elements_T143_array, 'T143 Bounded Surface entities'
     print *
     !write(*,*) this%ED
     write(*,*) 'Completed: read_attributes_Entity(this)'
