@@ -12,7 +12,7 @@ contains
       write (*, *) 'Starting: set_filename()'
       print *
       ! Set Variables
-      filename = './src/iges_files/hollowvase.igs'  ! Iges filename to open
+      filename = './iges_files/hollowvase.igs'  ! Iges filename to open
       filename = trim(filename)
       write (*, *) '  Filename : ', filename
       !print *

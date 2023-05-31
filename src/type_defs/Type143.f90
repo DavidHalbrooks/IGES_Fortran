@@ -10,9 +10,6 @@ module Type143
       integer              :: Type_BS = 0
       integer              :: SPTR = 0
       integer              :: N = 0
-      integer              :: iBDPT_1 = 0
-      integer              :: iBDPT_N = 0
-      integer              :: n_BDPT = 0
       integer, allocatable :: BDPT(:)
       integer, allocatable :: Parameter_Data(:)
       integer              :: n_PD_entries = 0
@@ -20,8 +17,6 @@ module Type143
       character(len=4000)  :: Raw_Parameter_Data = ''
    contains
       procedure  :: read_raw => read_raw_data_T143
-      procedure  :: test_type => test_type_T143
-      procedure  :: index_calcs => index_calcs_T143
       procedure  :: alloc => allocate_init_T143
       procedure  :: read_data => read_BDPT_data_T143
       !procedure  :: deallocate    => deallocate_T143
@@ -40,18 +35,11 @@ contains
       this%Raw_Parameter_Data = Raw_Parameter_Data
       this%Type_ID = Type_ID
       call read_raw_data_T143(this)
-      !call test_type_T143(this)
-      call index_calcs_T143(this)
       call allocate_init_T143(this)
       call read_BDPT_data_T143(this)
       !call deallocate_T143(this)
       !call evaluate_param_properties_T143(this)
    end subroutine all_subs_T143
-
-   subroutine deallocate_T143(this)
-      class(T143) :: this
-      deallocate (this%Parameter_Data)
-   end subroutine deallocate_T143
 
    subroutine read_raw_data_T143(this)
       class(T143)         :: this
@@ -64,25 +52,9 @@ contains
       this%N = this%Parameter_Data(3)
    end subroutine read_raw_data_T143
 
-   subroutine test_type_T143(this)
-      class(T143) :: this
-      if (this%Type_ID == 143) then
-         write (*, *) 'Parameter type to read in is 143, continuing...'
-      else
-         STOP 'ERROR: Parameter Type is not 143, see mod_T143.f90...'
-      end if
-   end subroutine test_type_T143
-
-   subroutine index_calcs_T143(this)
-      class(T143) :: this
-      this%iBDPT_1 = 4
-      this%iBDPT_N = (3 + this%N)
-   end subroutine index_calcs_T143
-
    subroutine allocate_init_T143(this)
       class(T143) :: this
-      this%n_BDPT = (this%iBDPT_N - this%iBDPT_1 + 1)
-      allocate (this%BDPT(this%n_BDPT))
+      allocate (this%BDPT(this%N))
       this%BDPT = 0
    end subroutine allocate_init_T143
 
@@ -96,6 +68,11 @@ contains
          end do
       end if
    end subroutine read_BDPT_data_T143
+
+   subroutine deallocate_T143(this)
+      class(T143) :: this
+      deallocate (this%Parameter_Data)
+   end subroutine deallocate_T143
 
 !  subroutine evaluate_param_properties_T143(this)
 !    class(T143) :: this

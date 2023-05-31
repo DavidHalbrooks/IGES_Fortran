@@ -136,8 +136,7 @@ contains
       else if (this%Type_ID == 143) then
          write (*, *) 'Type 143 Identified'
          call all_subs_T143(this%T143_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
-         write (*, *) this%T143_Data%Type_BS, this%T143_data%SPTR, this%T143_Data%N, this%T143_Data%iBDPT_1, &
-            this%T143_Data%iBDPT_N !this%T143_Data%BDPT
+         write (*, *) this%T143_Data%Type_BS, this%T143_data%SPTR, this%T143_Data%N, this%T143_Data%BDPT
       else if (this%Type_ID == 314) then
          write (*, *) 'Type 314 Identified'
          call all_subs_T314(this%T314_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
