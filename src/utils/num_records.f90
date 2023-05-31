@@ -18,10 +18,10 @@ contains
       integer              :: n = 0
       integer, intent(out) :: n_records
 
-      print *
-      write (*, *) '***************************************'
-      write (*, *) 'Starting: get_num_records'
-      print *
+      ! print *
+      ! write (*, *) '***************************************'
+      ! write (*, *) 'Starting: get_num_records'
+      ! print *
       open (newunit=file_unit, file=filename, &
             access=file_access, &
             action=file_action, &
@@ -36,10 +36,10 @@ contains
       end do
       close (file_unit)
       n_records = n
-      write (*, *) 'Total number of records: ', n_records
-      print *
-      write (*, *) 'Completed: get_num_records'
-      write (*, *) '***************************************'
+      ! write (*, *) 'Total number of records: ', n_records
+      ! print *
+      ! write (*, *) 'Completed: get_num_records'
+      ! write (*, *) '***************************************'
    end subroutine get_num_records
 
 end module num_records

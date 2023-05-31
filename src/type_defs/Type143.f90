@@ -1,6 +1,6 @@
 module Type143
 
-   use read_raw_PD
+   use read_ascii, only: read_ascii_PD
    implicit none
 
    Private
@@ -14,9 +14,9 @@ module Type143
       integer, allocatable :: Parameter_Data(:)
       integer              :: n_PD_entries = 0
       integer              :: Type_ID = 0
-      character(len=4000)  :: Raw_Parameter_Data = ''
+      character(len=4000)  :: ascii_Parameter_Data = ''
    contains
-      procedure  :: read_raw => read_raw_data_T143
+      procedure  :: read_ascii => read_ascii_data_T143
       procedure  :: alloc => allocate_init_T143
       procedure  :: read_data => read_BDPT_data_T143
       !procedure  :: deallocate    => deallocate_T143
@@ -26,31 +26,31 @@ module Type143
 
 contains
 
-   subroutine all_subs_T143(this, Type_ID, num_PD_entries, Raw_Parameter_Data)
+   subroutine all_subs_T143(this, Type_ID, num_PD_entries, ascii_Parameter_Data)
       class(T143), intent(inout) :: this
       integer, intent(in)       :: Type_ID
-      character(len=4000), intent(in) :: Raw_Parameter_Data
+      character(len=4000), intent(in) :: ascii_Parameter_Data
       integer, intent(in)  :: num_PD_entries
       this%n_PD_entries = num_PD_entries
-      this%Raw_Parameter_Data = Raw_Parameter_Data
+      this%ascii_Parameter_Data = ascii_Parameter_Data
       this%Type_ID = Type_ID
-      call read_raw_data_T143(this)
+      call read_ascii_data_T143(this)
       call allocate_init_T143(this)
       call read_BDPT_data_T143(this)
       !call deallocate_T143(this)
       !call evaluate_param_properties_T143(this)
    end subroutine all_subs_T143
 
-   subroutine read_raw_data_T143(this)
+   subroutine read_ascii_data_T143(this)
       class(T143)         :: this
       allocate (this%Parameter_Data(this%n_PD_entries - 1))
       this%Parameter_Data = 0
 
-      read (this%Raw_Parameter_Data, fmt=*) this%Type_ID, this%Parameter_Data
+      read (this%ascii_Parameter_Data, fmt=*) this%Type_ID, this%Parameter_Data
       this%TYPE_BS = this%Parameter_Data(1)
       this%SPTR = this%Parameter_Data(2)
       this%N = this%Parameter_Data(3)
-   end subroutine read_raw_data_T143
+   end subroutine read_ascii_data_T143
 
    subroutine allocate_init_T143(this)
       class(T143) :: this

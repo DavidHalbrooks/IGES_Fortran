@@ -1,18 +1,18 @@
-module read_raw_PD
+module read_ascii
 
    use count_PD
 
    implicit none
 
    private
-   public :: read_Raw_Parametric_Data
+   public :: read_ascii_PD
 
 contains
 
-   subroutine read_Raw_Parametric_Data(fileunit, &
-                                       n_PD_records, num_record_start, &
-                                       num_PD_entries, &
-                                       Type_ID, Raw_Parameter_Data)
+   subroutine read_ascii_PD(fileunit, &
+                            n_PD_records, num_record_start, &
+                            num_PD_entries, &
+                            Type_ID, Raw_Parameter_Data)
       integer, intent(in)                  :: fileunit
       integer, intent(in)                  :: n_PD_records
       integer, intent(in)                  :: num_record_start
@@ -50,6 +50,6 @@ contains
       read_format = '(i3)'
       Raw_Parameter_Data = trim(Raw_Parameter_Data)
       read (Raw_Parameter_Data, fmt=read_format) Type_ID
-   end subroutine read_Raw_Parametric_Data
+   end subroutine read_ascii_PD
 
-end module read_raw_PD
+end module read_ascii

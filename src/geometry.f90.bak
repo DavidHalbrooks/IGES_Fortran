@@ -1,15 +1,17 @@
 module geometry
 
-   use filename
-   use num_records
-   use open_close
-   use T_import
-   use S_import
-   use G_import
-   use DE_import
+   use filename, only: set_filename
+   use num_records, only: get_num_records
+   use open_close, only: open_file, close_file
+   use T_import, only: read_T_section_Iges
+   use S_import !, only: S
+   use G_import !, only: G
+   use DE_import !, only: Attributes
    use PD_import
    use array_utils
-   use obj_T143
+   !use obj_T143
+
+   use TypeIges, only TypeAttributes
 
    implicit none
 

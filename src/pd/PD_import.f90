@@ -1,6 +1,6 @@
 module PD_import
 
-   use read_raw_PD
+   use read_ascii, only: read_ascii_PD
    use Type126
    use Type128
    use Type141
@@ -12,7 +12,7 @@ module PD_import
 
    private
    public :: Parametric, &
-             read_raw, &
+             read_ascii, &
              import_T126_data, import_T128_data, &
              import_T141_data, import_T143_data, &
              import_T314_data, &
@@ -30,7 +30,7 @@ module PD_import
       type(T143_object)      :: T143_object
       !type(T141_object)      :: T141_object
    contains
-      procedure :: read => read_raw
+      procedure :: read => read_ascii
       procedure :: import_T143 => import_T143_data
       procedure :: import_T128 => import_T128_data
       procedure :: import_T126 => import_T126_data
@@ -40,26 +40,26 @@ module PD_import
 
 contains
 
-   subroutine read_raw(this, fileunit, n_PD_records, num_record_start)
+   subroutine read_ascii(this, fileunit, n_PD_records, num_record_start)
       class(Parametric) :: this
       integer, intent(inout) :: fileunit
       integer, intent(inout) :: n_PD_records
       integer, intent(inout) :: num_record_start
-      call read_Raw_Parametric_Data(fileunit, n_PD_records, &
-                                    num_record_start, &
-                                    this%num_PD_entries, &
-                                    this%Type_ID, &
-                                    this%Raw_Parameter_Data)
+      call read_ascii_PD(fileunit, n_PD_records, &
+                         num_record_start, &
+                         this%num_PD_entries, &
+                         this%Type_ID, &
+                         this%Raw_Parameter_Data)
       !call import_T143_data(this)
       !call import_Parametric_data(this)
-   end subroutine read_raw
+   end subroutine read_ascii
 
    subroutine import_T143_data(this, fileunit, n_PD_records, num_record_start)
       class(Parametric) :: this
       integer, intent(inout) :: fileunit
       integer, intent(inout) :: n_PD_records
       integer, intent(inout) :: num_record_start
-      call read_raw(this, fileunit, n_PD_records, num_record_start)
+      call read_ascii(this, fileunit, n_PD_records, num_record_start)
       call all_subs_T143(this%T143_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
    end subroutine import_T143_data
 
@@ -80,7 +80,7 @@ contains
       integer, intent(inout) :: fileunit
       integer, intent(inout) :: n_PD_records
       integer, intent(inout) :: num_record_start
-      call read_raw(this, fileunit, n_PD_records, num_record_start)
+      call read_ascii(this, fileunit, n_PD_records, num_record_start)
       call all_subs_T128(this%T128_Data, this%Type_ID, this%num_PD_entries, this%Raw_Parameter_Data)
       write (*, *) this%T128_Data%S
       write (*, *) this%T128_Data%T

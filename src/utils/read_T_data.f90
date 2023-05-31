@@ -1,5 +1,5 @@
-module T_import
-
+module read_T_data
+   use iso_fortran_env, only: int32, int64, real32, real64
    implicit none
 
    private
@@ -37,4 +37,4 @@ contains
 
    end subroutine read_T_section_Iges
 
-end module T_import
+end module read_T_data

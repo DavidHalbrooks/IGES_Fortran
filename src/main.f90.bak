@@ -1,0 +1,20 @@
+program main
+
+   !use iso_fortran_env, only: int32, real32
+   !use mod_iges_classes
+   use geometry
+
+   implicit none
+
+   !class(Iges), allocatable      :: obj
+   !type(Iges)      :: f1
+   !type(Records)   :: r1
+   type(Model)    :: G
+
+   print *
+   write (*, *) '********** Program main_Model starting ************** '
+   print *
+   call G%
+   write (*, *) '********** Program main_Model finished ************** '
+
+end program main
