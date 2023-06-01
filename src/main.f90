@@ -12,18 +12,26 @@ program main
    call Iges%open_file
    call Iges%get_total_num_records
    call Iges%read_tail_data
+   call Iges%read_start_data
+   call Iges%calc_pos
+   call Iges%read_global_data
    call Iges%close_file
 
-   print *
-   Print *, 'Diagnostics'
-   print *, trim(Iges%filename)
-   print *, Iges%num_records
-   print *, Iges%fileunit
-   write (*, *) Iges%Tail_data%num_S
-   write (*, *) Iges%Tail_data%num_G
-   write (*, *) Iges%Tail_data%num_D
-   write (*, *) Iges%Tail_data%num_P
-   write (*, *) Iges%Tail_data%num_T
+   ! print *
+   ! Print *, 'Diagnostics'
+   ! print *, 'Filename:          ', trim(Iges%filename)
+   ! print *, 'Number of records: ', Iges%num_records
+   ! print *, 'Fileunit number:   ', Iges%fileunit
+   ! print *
+   ! print *, 'Tail Data'
+   ! write (*, *) Iges%Tail_data%num_S
+   ! write (*, *) Iges%Tail_data%num_G
+   ! write (*, *) Iges%Tail_data%num_D
+   ! write (*, *) Iges%Tail_data%num_P
+   ! write (*, *) Iges%Tail_data%num_T
+   ! print *
+   ! print *, 'Header Data'
+   ! write (*, *) trim(Iges%Start_data%Header)
 
    !print *, Iges
 end program main

@@ -5,6 +5,9 @@ module Iges_master
    use open_close, only: open_file, close_file
    use num_records, only: get_num_records
    use Type_Tail, only: Tail
+   use Type_Start, only: Start
+   use record_pos_calcs, only: position_start_calcs
+   use Type_Global, only: Global
    implicit none
 
    private
@@ -24,6 +27,10 @@ module Iges_master
       integer(int32)           :: num_T314_Entities
       integer(int32)           :: num_unidentified_Entities
       type(Tail)               :: Tail_data
+      type(Start)              :: Start_data
+      type(Global)             :: Metadata
+      ! type(Entity)             :: Entity_data
+      ! type(Pametric)           :: Parametric_data
 
    contains
       procedure, public  :: init_data => init
@@ -31,6 +38,9 @@ module Iges_master
       procedure, public  :: open_file => open_iges_file
       procedure, public  :: get_total_num_records => get_total
       procedure, public  :: read_tail_data => read_tail
+      procedure, public  :: read_start_data => read_start
+      procedure, public  :: calc_pos => calc_read_pos
+      procedure, public  :: read_global_data => read_global
       procedure, public  :: close_file => close_iges_file
    end type Iges_Model
 
@@ -76,6 +86,36 @@ contains
       call this%Tail_data%read_T_data(this%fileunit, this%num_records)
       write (*, '(a)') '*** read_tail completed'
    end subroutine read_tail
+
+   subroutine read_start(this)
+      class(Iges_Model), intent(inout) :: this
+      call this%Start_data%read_S_data(this%fileunit, this%Tail_data%num_S)
+      write (*, '(a)') '*** read_start completed'
+   end subroutine read_start
+
+   subroutine calc_read_pos(this)
+      class(Iges_Model), intent(inout) :: this
+      integer(int32), dimension(4) :: num_vector
+      integer(int32), dimension(4) :: record_pos_vector
+      num_vector(1) = this%Tail_data%num_S
+      num_vector(2) = this%Tail_data%num_G
+      num_vector(3) = this%Tail_data%num_D
+      num_vector(4) = this%Tail_data%num_P
+      record_pos_vector = position_start_calcs(num_vector)
+      this%Metadata%record_start = record_pos_vector(1)
+      ! this%Entity_data%record_start = record_pos_vector(2)
+      ! this%Parametric_data%record_start = record_pos_vector(3)
+      write (*, '(a)') '*** calc_read_pos completed'
+   end subroutine calc_read_pos
+
+   subroutine read_global(this)
+      class(Iges_Model), intent(inout) :: this
+      call this%Metadata%read_G_data(this%fileunit, &
+                                     this%Tail_data%num_G, &
+                                     this%Metadata%record_start)
+      write (*, '(a)') '*** read_global completed'
+      !print *, this%Metadata
+   end subroutine read_global
 
    subroutine close_iges_file(this)
       class(Iges_Model), intent(inout) :: this
