@@ -75,6 +75,8 @@ Type_Global.mod := src/type_defs/Type_Global.f90.o
 open_close.mod := src/utils/open_close.f90.o
 record_pos_calcs.mod := src/utils/record_pos_calcs.f90.o
 read_global_ascii.mod := src/utils/read_global_ascii.f90.o
+Type_Metadata2.mod := src/type_defs/Type_Metadata2.f90.o
+Type_Directory.mod := src/type_defs/Type_Directory.f90.o
 
 src/utils/filename.f90.o:
 src/utils/num_records.f90.o:
@@ -91,6 +93,8 @@ src/type_defs/Iges_master.f90.o: $(Type_Tail.mod)
 src/type_defs/Iges_master.f90.o: $(Type_Start.mod)
 src/type_defs/Iges_master.f90.o: $(record_pos_calcs.mod)
 src/type_defs/Iges_master.f90.o: $(Type_Global.mod)
+src/type_defs/Iges_master.f90.o: $(Type_Metadata2.mod)
+src/type_defs/Iges_master.f90.o: $(Type_Directory.mod)
 src/main.f90.o: $(Iges_master.mod)
 
 

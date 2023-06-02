@@ -7,12 +7,12 @@ program main
 
    ! Call encapsulated data procedures
    print *
-   call Iges%init_data
+   call Iges%init_metadata
    call Iges%get_Iges_filename
    call Iges%open_file
    call Iges%get_total_num_records
    call Iges%read_tail_data
-   call Iges%read_start_data
+   call Iges%read_header_data
    call Iges%calc_pos
    call Iges%read_global_data
    call Iges%close_file

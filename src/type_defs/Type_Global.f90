@@ -33,7 +33,7 @@ module Type_Global
       integer(int32)    :: drafting_flag = 0
       character(len=80) :: date_time_modified = ''
       character(len=80) :: mil_spec = ''
-      integer(int32)    :: record_start = 0
+      !integer(int32)    :: record_start = 0
    contains
       procedure :: read_G_data => read
    end type Global
