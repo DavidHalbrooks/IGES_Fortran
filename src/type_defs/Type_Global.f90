@@ -57,7 +57,7 @@ contains
       integer(int32), allocatable     :: ascii_to_ints(:)
       integer(int32), allocatable     :: ascii_to_ints_indices(:)
       integer(int32), allocatable     :: ascii_to_reals_indices(:)
-      integer(real64), allocatable    :: ascii_to_reals(:)
+      real(real64), allocatable       :: ascii_to_reals(:)
 
       buffer_string = ''
       allocate (buffer(n_records_G))
@@ -76,29 +76,24 @@ contains
 
       ascii_vector = extract_ascii_vector(buffer_string)
       do i = 1, size(ascii_vector)
-         print *, trim(ascii_vector(i))
       end do
 
       allocate (ascii_to_ints(26))
       allocate (ascii_to_ints_indices(9))
       ascii_to_ints = 0
-      ascii_to_ints_indices = [8, 9, 10, 11, 12, 15, 17, 24, 25]
+      ascii_to_ints_indices = [7, 8, 9, 10, 11, 14, 16, 23, 24]
       do i = 1, size(ascii_to_ints_indices)
          j = ascii_to_ints_indices(i)
-         print *, trim(ascii_vector(j))
          read (ascii_vector(j), *) ascii_to_ints(j)
-         print *, ascii_to_ints(j)
       end do
 
       allocate (ascii_to_reals(26))
       allocate (ascii_to_reals_indices(4))
       ascii_to_reals = 0.0
-      ascii_to_reals_indices = [14, 18, 20, 21]
+      ascii_to_reals_indices = [13, 17, 19, 20]
       do i = 1, size(ascii_to_reals_indices)
          j = ascii_to_reals_indices(i)
-         print *, trim(ascii_vector(j))
-         !read (ascii_vector(j), '(f8.8)') ascii_to_reals(j)
-         print *, ascii_to_reals(j)
+         read (ascii_vector(j), *) ascii_to_reals(j)
       end do
 
       this%parameter_delim = ascii_vector(1)
@@ -113,20 +108,20 @@ contains
       this%max_power_double = ascii_to_ints(10)
       this%sig_digits_double = ascii_to_ints(11)
       this%product_id_recieving = ascii_vector(12)
-      ! this%model_space_scale = ascii_vector(13)
-      ! this%units_flag = ascii_vector(14)
-      ! this%units_name = ascii_vector(15)
-      ! this%max_num_line_weights = ascii_vector(16)
-      ! this%max_line_weight = ascii_vector(17)
-      ! this%date_time_generated = ascii_vector(18)
-      ! this%min_resolution = ascii_vector(19)
-      ! this%max_coord_value = ascii_vector(20)
-      ! this%author = ascii_vector(21)
-      ! this%organization = ascii_vector(22)
-      ! this%version_flag = ascii_vector(23)
-      ! this%drafting_flag = ascii_vector(24)
-      ! this%date_time_modified = ascii_vector(25)
-      ! this%mil_spec = ascii_vector(26)
+      this%model_space_scale = ascii_to_reals(13)
+      this%units_flag = ascii_to_ints(14)
+      this%units_name = ascii_vector(15)
+      this%max_num_line_weights = ascii_to_ints(16)
+      this%max_line_weight = ascii_to_reals(17)
+      this%date_time_generated = ascii_vector(18)
+      this%min_resolution = ascii_to_reals(19)
+      this%max_coord_value = ascii_to_reals(20)
+      this%author = ascii_vector(21)
+      this%organization = ascii_vector(22)
+      this%version_flag = ascii_to_ints(23)
+      this%drafting_flag = ascii_to_ints(24)
+      this%date_time_modified = ascii_vector(25)
+      this%mil_spec = ascii_vector(26)
 
    end subroutine read
 

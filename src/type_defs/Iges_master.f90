@@ -114,7 +114,6 @@ contains
                                      this%Tail_data%num_G, &
                                      this%Metadata%record_start)
       write (*, '(a)') '*** read_global completed'
-      !print *, this%Metadata
    end subroutine read_global
 
    subroutine close_iges_file(this)

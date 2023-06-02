@@ -22,6 +22,7 @@ contains
       character(len=80) :: read_fmt = ''
       character(len=1) :: char_fmt = ''
       character(len=8) :: char_fmt_num = ''
+      integer(int32)   :: num_global_entries = 0
       integer(int32)   :: i, j
 
       delim_char = ','
@@ -42,7 +43,7 @@ contains
          end if
       end do
 
-      allocate (del_index_vector(size_indices_vector + 1), source=0)
+      allocate (del_index_vector(26), source=0)
       ! Position of the delimiter indices
       j = 1
       do i = 1, size(char_vector)
@@ -52,32 +53,52 @@ contains
          end if
       end do
 
-      allocate (start_slice(size_indices_vector + 1), source=0)
-      allocate (end_slice(size_indices_vector + 1), source=0)
+      num_global_entries = 26
+      allocate (start_slice(num_global_entries))
+      allocate (end_slice(num_global_entries))
+      start_slice = 0
+      end_slice = 0
 
       ! Calculate field slice information
-      do i = 1, (size(del_index_vector))
-         if (i .eq. 1) then
-            start_slice(i) = i
-            end_slice(i) = (del_index_vector(i))
-         else if (i .eq. 2) then
-            cycle
-         else if ((del_index_vector(i)) .eq. (del_index_vector(i - 1) + 1)) then
-            start_slice(i) = (del_index_vector(i - 1))
-            end_slice(i) = (del_index_vector(i))
+      do i = 2, (num_global_entries)
+         if (i .eq. 2) then
+            start_slice(i - 1) = 1
+            end_slice(i - 1) = (del_index_vector(i) - 1)
+            ! ^^^^^ Start case to obtain Holerith paramter delimeter
+         else if (i .eq. 3) then
+            start_slice(i - 1) = (del_index_vector(i - 1) + 1)
+            end_slice(i - 1) = (del_index_vector(i) - 1)
+            ! ^^^^^ Special case to obtain Holerith record delimeter
+         else if (i .eq. 4) then
+            start_slice(i - 1) = del_index_vector(i)
+            end_slice(i - 1) = del_index_vector(i) - 1
+            ! ^^^^^ Special case after the two mandated Holerith constants
+         else if (del_index_vector(i) .eq. del_index_vector(i - 1)) then
+            start_slice(i - 1) = (del_index_vector(i - 1))
+            end_slice(i - 1) = (del_index_vector(i))
+            ! ^^^^^ Special Case of two delimiters with no entry
          else if (i .eq. size(del_index_vector)) then
-            start_slice(i) = (del_index_vector(i - 1) + 1)
-            end_slice(i) = (size(char_vector) - 1)
+            start_slice(i - 1) = (del_index_vector(i - 1) + 1)
+            end_slice(i - 1) = (size(char_vector) - 1)
+            ! ^^^^^ End case
          else if (i .gt. 1) then
-            start_slice(i) = (del_index_vector(i - 1) + 1)
-            end_slice(i) = (del_index_vector(i) - 1)
+            start_slice(i - 1) = (del_index_vector(i - 1) + 1)
+            end_slice(i - 1) = (del_index_vector(i) - 1)
+            ! ^^^^^ Normal operating case
          end if
       end do
 
-      allocate (ascii_vector(size(del_index_vector)))
-      ascii_vector = 'test'
+      ! Capture the special case where no entry 26 exists
+      if (del_index_vector(26) .eq. 0) then
+         start_slice(i - 1) = (size(char_vector))
+         end_slice(i - 1) = (size(char_vector) - 1)
+      end if
 
-      do i = 1, (size(ascii_vector))
+      allocate (ascii_vector(size(del_index_vector)))
+      ascii_vector = ''
+
+      do i = 1, num_global_entries
+         !print *, i, char_vector(start_slice(i):end_slice(i))
          write (ascii_vector(i), *) char_vector(start_slice(i):end_slice(i))
       end do
 
