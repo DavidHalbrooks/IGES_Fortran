@@ -14,6 +14,7 @@ program main
    call Iges%read_tail_data
    call Iges%read_header_data
    call Iges%calc_pos
+   call Iges%alloc_directory_data
    call Iges%read_global_data
    call Iges%close_file
 

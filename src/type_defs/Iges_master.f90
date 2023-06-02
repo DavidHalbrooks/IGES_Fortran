@@ -10,20 +10,21 @@ module Iges_master
    use Type_Global, only: Global
    use Type_Metadata2, only: Metadata2
    use Type_Directory, only: Directory
+   !use Type_Parametric, only: Parametric
    implicit none
 
    private
    public :: Iges_Model
 
    type, public :: Iges_Model
-      character(len=512)           :: filename
-      integer(int32)               :: fileunit
-      type(Tail)                   :: Tail_data
-      type(Start)                  :: Start_data
-      type(Global)                 :: Metadata_CAD
-      type(Metadata2)              :: Metadata_Model
-      type(Directory), allocatable :: Dir_Entries
-      ! type(Pametric)           :: Parametric_data
+      character(len=512)            :: filename
+      integer(int32)                :: fileunit
+      type(Tail)                    :: Tail_data
+      type(Start)                   :: Start_data
+      type(Global)                  :: Metadata_CAD
+      type(Metadata2)               :: Metadata_Model
+      type(Directory), allocatable  :: Dir_Entries(:)
+      !type(Parametric), allocatable :: Parametric_data(:)
 
    contains
       procedure, public  :: init_metadata => init
@@ -34,9 +35,9 @@ module Iges_master
       procedure, public  :: read_header_data => read_header
       procedure, public  :: calc_pos => calc_read_pos
       procedure, public  :: read_global_data => read_global
-      !procedure, public  :: alloc_directory_data => alloc_directory
-      ! procedure, public  :: init_directory_data => init_directory
+      procedure, public  :: alloc_directory_data => alloc_directory
       procedure, public  :: read_directory_data => read_directory
+      !procedure, public  :: alloc_parametric_data => alloc_parametric
       procedure, public  :: close_file => close_iges_file
    end type Iges_Model
 
@@ -117,19 +118,34 @@ contains
                                          this%Metadata_Model%num_G_records, &
                                          this%Metadata_Model%G_record_start)
       write (*, '(a)') '*** read_global completed'
+      !print *, sizeof(this%Metadata_Model)
       print *, this%Metadata_Model
    end subroutine read_global
+
+   subroutine alloc_directory(this)
+      class(Iges_Model), intent(inout) :: this
+      allocate (this%Dir_Entries(this%Metadata_Model%num_D_records))
+      print *, 'size Dir_Entries:', size(this%Dir_Entries)
+      write (*, '(a)') '*** alloc_directory completed'
+   end subroutine alloc_directory
 
    subroutine read_directory(this)
       class(Iges_Model), intent(inout) :: this
       ! call this%Dir_Entries%read_entries(this%fileunit, &
       !                                    this%Metadata_Model%num_D_records, &
       !                                    this%Metadata_Model%D_record_start)
-      call this%Dir_Entries%read_entries(this%fileunit, &
-                                         this%Metadata_Model%D_record_start)
+      ! call this%Dir_Entries%read_entries(this%fileunit, &
+      !                                    this%Metadata_Model%D_record_start)
       write (*, '(a)') '*** read_directory completed'
       print *, this%Dir_Entries
    end subroutine read_directory
+
+   ! subroutine alloc_paramatric(this)
+   !    class(Iges_Model), intent(inout) :: this
+   !    allocate (this%Parametric_Data(this%Metadata_Model%num_P_records))
+   !    print *, 'size Parametric_Data:', size(this%Parametric_Data)
+   !    write (*, '(a)') '*** alloc_parameter_data completed'
+   ! end subroutine alloc_parametric
 
    subroutine close_iges_file(this)
       class(Iges_Model), intent(inout) :: this
