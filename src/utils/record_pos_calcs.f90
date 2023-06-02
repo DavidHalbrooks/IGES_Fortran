@@ -10,7 +10,7 @@ contains
    function position_start_calcs(num_vector) result(record_pos_vector)
       integer(int32), dimension(4) :: num_vector
       integer(int32), dimension(4) :: record_pos_vector
-      integer(int32)     :: prev_sum
+      !integer(int32)     :: prev_sum
       integer(int32)     :: i
 
       record_pos_vector = 0

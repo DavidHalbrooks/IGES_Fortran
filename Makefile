@@ -19,7 +19,7 @@ CFLAGS = -std=f2008ts
 # Warning Flags
 CFLAGS += -Wall
 # Debugging Options
-CFLAGS += -fPIC -fmax-errors=3 -fcheck=all -fbacktrace
+CFLAGS += -fPIC -fmax-errors=3 -fcheck=all -fbacktrace -fbounds-check
 # GDB Flag
 CFLAGS += -g
 ###############################################################################
@@ -74,13 +74,16 @@ Type_Start.mod := src/type_defs/Type_Start.f90.o
 Type_Global.mod := src/type_defs/Type_Global.f90.o
 open_close.mod := src/utils/open_close.f90.o
 record_pos_calcs.mod := src/utils/record_pos_calcs.f90.o
+read_global_ascii.mod := src/utils/read_global_ascii.f90.o
 
 src/utils/filename.f90.o:
 src/utils/num_records.f90.o:
 src/utils/record_pos_calcs.f90.o:
 src/utils/open_close.f90.o:
+src/utils/read_global_ascii.f90.o:
 src/type_defs/Type_Tail.f90.o:
 src/type_defs/Type_Start.f90.o:
+src/type_defs/Type_Global.f90.o: $(read_global_ascii.mod)
 src/type_defs/Iges_master.f90.o: $(filename.mod)
 src/type_defs/Iges_master.f90.o: $(open_close.mod)
 src/type_defs/Iges_master.f90.o: $(num_records.mod)

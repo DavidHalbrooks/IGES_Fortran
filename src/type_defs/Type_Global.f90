@@ -1,5 +1,6 @@
 module Type_Global
    use iso_fortran_env, only: int32, int64, real32, real64
+   use read_global_ascii, only: extract_ascii_vector
    implicit none
 
    private
@@ -46,14 +47,19 @@ contains
       integer(int32), intent(in)      :: n_records_G
       integer(int32), intent(in)      :: num_record_start
       integer(int32)                  :: i = 0
+      integer(int32)                  :: j = 0
       character(len=20)               :: string_format = ''
       integer(int32)                  :: G_record_num = 0
-      character(len=400), allocatable :: buffer(:)
-      character(len=400)              :: buffer_string
+      character(len=800), allocatable :: buffer(:)
+      character(len=800)              :: buffer_string
       integer(int32)                  :: n_global_entries = 26
-      character(len=512), dimension(26) :: test_reader
-      character, allocatable             :: char_array(:)
+      character(len=320), allocatable :: ascii_vector(:)
+      integer(int32), allocatable     :: ascii_to_ints(:)
+      integer(int32), allocatable     :: ascii_to_ints_indices(:)
+      integer(int32), allocatable     :: ascii_to_reals_indices(:)
+      integer(real64), allocatable    :: ascii_to_reals(:)
 
+      buffer_string = ''
       allocate (buffer(n_records_G))
       G_record_num = num_record_start
       string_format = '(a72)'
@@ -67,17 +73,61 @@ contains
          G_record_num = G_record_num + 1
          buffer_string = buffer(i)
       end do
-      !read(buffer_string, delim=",") test
-      write (*, *) buffer_string
-      read (buffer_string, *) test_reader
-      print *, 'length :', len(buffer_string)
-      !allocate (char_array(len(buffer_string))
-      do i = 1, size(test_reader)
-         print *, i
-         test_reader(i) = trim(test_reader(i))
-         print *, test_reader(i)
+
+      ascii_vector = extract_ascii_vector(buffer_string)
+      do i = 1, size(ascii_vector)
+         print *, trim(ascii_vector(i))
       end do
-      !print *, test_reader
+
+      allocate (ascii_to_ints(26))
+      allocate (ascii_to_ints_indices(9))
+      ascii_to_ints = 0
+      ascii_to_ints_indices = [8, 9, 10, 11, 12, 15, 17, 24, 25]
+      do i = 1, size(ascii_to_ints_indices)
+         j = ascii_to_ints_indices(i)
+         print *, trim(ascii_vector(j))
+         read (ascii_vector(j), *) ascii_to_ints(j)
+         print *, ascii_to_ints(j)
+      end do
+
+      allocate (ascii_to_reals(26))
+      allocate (ascii_to_reals_indices(4))
+      ascii_to_reals = 0.0
+      ascii_to_reals_indices = [14, 18, 20, 21]
+      do i = 1, size(ascii_to_reals_indices)
+         j = ascii_to_reals_indices(i)
+         print *, trim(ascii_vector(j))
+         !read (ascii_vector(j), '(f8.8)') ascii_to_reals(j)
+         print *, ascii_to_reals(j)
+      end do
+
+      this%parameter_delim = ascii_vector(1)
+      this%record_delim = ascii_vector(2)
+      this%product_id = ascii_vector(3)
+      this%filename = ascii_vector(4)
+      this%system_id = ascii_vector(5)
+      this%preproc_version = ascii_vector(6)
+      this%int_binary_bits = ascii_to_ints(7)
+      this%max_power_single_float = ascii_to_ints(8)
+      this%num_sig_digits = ascii_to_ints(9)
+      this%max_power_double = ascii_to_ints(10)
+      this%sig_digits_double = ascii_to_ints(11)
+      this%product_id_recieving = ascii_vector(12)
+      ! this%model_space_scale = ascii_vector(13)
+      ! this%units_flag = ascii_vector(14)
+      ! this%units_name = ascii_vector(15)
+      ! this%max_num_line_weights = ascii_vector(16)
+      ! this%max_line_weight = ascii_vector(17)
+      ! this%date_time_generated = ascii_vector(18)
+      ! this%min_resolution = ascii_vector(19)
+      ! this%max_coord_value = ascii_vector(20)
+      ! this%author = ascii_vector(21)
+      ! this%organization = ascii_vector(22)
+      ! this%version_flag = ascii_vector(23)
+      ! this%drafting_flag = ascii_vector(24)
+      ! this%date_time_modified = ascii_vector(25)
+      ! this%mil_spec = ascii_vector(26)
+
    end subroutine read
 
 end module Type_Global
