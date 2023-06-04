@@ -35,8 +35,10 @@ module Iges_master
       procedure, public  :: read_header_data => read_header
       procedure, public  :: calc_pos => calc_read_pos
       procedure, public  :: read_global_data => read_global
+      procedure, public  :: scan_directory_data => scan_directory
       procedure, public  :: alloc_directory_data => alloc_directory
       procedure, public  :: read_directory_data => read_directory
+      procedure, public  :: print_metadata2_info => print_metadata2
       !procedure, public  :: alloc_parametric_data => alloc_parametric
       procedure, public  :: close_file => close_iges_file
    end type Iges_Model
@@ -51,10 +53,11 @@ contains
       this%Metadata_Model%num_G_records = 0
       this%Metadata_Model%num_P_records = 0
       this%Metadata_Model%num_T_records = 0
-      this%Metadata_Model%num_T126_Entities = 0
-      this%Metadata_Model%num_T128_Entities = 0
-      this%Metadata_Model%num_T141_Entities = 0
-      this%Metadata_Model%num_T314_Entities = 0
+      this%Metadata_Model%num_T126 = 0
+      this%Metadata_Model%num_T128 = 0
+      this%Metadata_Model%num_T141 = 0
+      this%Metadata_Model%num_T143 = 0
+      this%Metadata_Model%num_T314 = 0
       this%Metadata_Model%num_unidentified_Entities = 0
       write (*, '(a)') '*** init completed'
    end subroutine init
@@ -118,9 +121,21 @@ contains
                                          this%Metadata_Model%num_G_records, &
                                          this%Metadata_Model%G_record_start)
       write (*, '(a)') '*** read_global completed'
-      !print *, sizeof(this%Metadata_Model)
-      print *, this%Metadata_Model
    end subroutine read_global
+
+   subroutine scan_directory(this)
+      class(Iges_Model), intent(inout) :: this
+      this%Metadata_Model%fileunit = this%fileunit
+      call this%Metadata_Model%scan_directory_data
+      write (*, '(a)') '*** scan_directory completed'
+   end subroutine scan_directory
+
+   subroutine print_metadata2(this)
+      class(Iges_Model), intent(inout) :: this
+      !print *, this%Metadata_Model
+      print *, this%Metadata_Model%T126_index_vector
+      write (*, '(a)') '*** print_metadata2 completed'
+   end subroutine print_metadata2
 
    subroutine alloc_directory(this)
       class(Iges_Model), intent(inout) :: this

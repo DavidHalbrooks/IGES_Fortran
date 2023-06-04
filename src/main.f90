@@ -14,8 +14,10 @@ program main
    call Iges%read_tail_data
    call Iges%read_header_data
    call Iges%calc_pos
+   call Iges%scan_directory_data
    call Iges%alloc_directory_data
    call Iges%read_global_data
+   !call Iges%print_metadata2_info
    call Iges%close_file
 
    ! print *
