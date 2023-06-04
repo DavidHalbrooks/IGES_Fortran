@@ -10,13 +10,13 @@ program main
    call Iges%init_metadata
    call Iges%get_Iges_filename
    call Iges%open_file
-   call Iges%get_total_num_records
+   call Iges%get_total_records_num
    call Iges%read_tail_data
    call Iges%read_header_data
-   call Iges%calc_pos
-   call Iges%scan_directory_data
-   call Iges%alloc_directory_data
+   call Iges%calc_record_index_pos
    call Iges%read_global_data
+   call Iges%scan_directory_data
+   !call Iges%alloc_directory_data
    !call Iges%print_metadata2_info
    call Iges%close_file
 

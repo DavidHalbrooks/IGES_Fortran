@@ -1,11 +1,10 @@
-module Type_Directory
+module type_directory
    use iso_fortran_env, only: int32, int64, real32, real64
    implicit none
 
    private
-   public :: Directory
 
-   type Directory
+   type, public :: t_directory
       integer :: entity_type_num = 0
       integer :: parameter_data = 0
       integer :: structure = 0
@@ -28,13 +27,13 @@ module Type_Directory
       integer :: sequence_num2 = 0
    contains
       procedure :: read_entries => read
-   end type Directory
+   end type t_directory
 
 contains
 
    subroutine read (this, fileunit, &
                     num_record_start)
-      class(Directory)    :: this
+      class(t_directory)    :: this
       integer, intent(in)  :: fileunit
       integer, intent(in)  :: num_record_start
       integer              :: DE_record_num
@@ -99,4 +98,4 @@ contains
 
    end subroutine read
 
-end module Type_Directory
+end module type_directory

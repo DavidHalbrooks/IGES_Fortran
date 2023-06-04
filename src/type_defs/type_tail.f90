@@ -1,34 +1,33 @@
-module Type_Tail
+module type_tail
    use iso_fortran_env, only: int32, int64, real32, real64
    implicit none
 
    private
-   !public :: Tail, initialize_T
 
-   Type, public :: Tail
+   Type, public :: T_tail
       integer(int32)        :: num_S
       integer(int32)        :: num_G
       integer(int32)        :: num_D
       integer(int32)        :: num_P
       integer(int32)        :: num_T
    contains
-      procedure, public  :: initialize_T => init_T
-      procedure, public  :: read_T_data => read_T
-   end type Tail
+      procedure, public  :: init_tail_data => init_tail
+      procedure, public  :: read_tail_data => read_tail
+   end type T_tail
 
 contains
 
-   subroutine init_T(this)
-      class(Tail), intent(inout) :: this
+   subroutine init_tail(this)
+      class(T_tail), intent(inout) :: this
       this%num_S = 0
       this%num_G = 0
       this%num_D = 0
       this%num_P = 0
       this%num_T = 0
-   end subroutine init_T
+   end subroutine init_tail
 
-   subroutine read_T(this, fileunit, T_record_num)
-      class(Tail), intent(inout) :: this
+   subroutine read_tail(this, fileunit, T_record_num)
+      class(T_tail), intent(inout) :: this
       integer, intent(in)  :: fileunit
       integer, intent(in)  :: T_record_num
       character            :: S, G, D, P, T
@@ -43,6 +42,6 @@ contains
          blanks, &
          T, this%num_T
 
-   end subroutine read_T
+   end subroutine read_tail
 
-end module Type_Tail
+end module type_tail

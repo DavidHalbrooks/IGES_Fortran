@@ -1,20 +1,19 @@
-module Type_Start
+module type_start
    use iso_fortran_env, only: int32, int64, real32, real64
    implicit none
 
    private
-   public :: Start
 
-   type Start
+   type, public :: t_start
       character(len=400) :: Header
    contains
       procedure :: read_S_data => read
-   end type Start
+   end type t_start
 
 contains
 
    subroutine read (this, fileunit, num_records_S)
-      class(Start) :: this
+      class(t_start) :: this
       integer(int32), intent(in)      :: fileunit
       integer(int32), intent(in)      :: num_records_S
       integer(int32)                  :: i
@@ -35,8 +34,7 @@ contains
             buffer_data = buffer_record(i)
          end if
          this%Header = buffer_data
-         !print *, this%Header
       end do
    end subroutine read
 
-end module Type_Start
+end module type_start

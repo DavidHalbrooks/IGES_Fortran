@@ -1,12 +1,11 @@
-module Type_Global
+module type_global
    use iso_fortran_env, only: int32, int64, real32, real64
    use read_global_ascii, only: extract_ascii_vector
    implicit none
 
    private
-   public :: Global
 
-   type Global
+   type, public ::  t_global
       character(len=10) :: parameter_delim = ''
       character(len=80) :: record_delim = ''
       character(len=80) :: product_id = ''
@@ -36,13 +35,13 @@ module Type_Global
       !integer(int32)    :: record_start = 0
    contains
       procedure :: read_G_data => read
-   end type Global
+   end type t_global
 
 contains
 
    subroutine read (this, fileunit, &
                     n_records_G, num_record_start)
-      class(Global), intent(inout) :: this
+      class(t_global), intent(inout) :: this
       integer(int32), intent(in)      :: fileunit
       integer(int32), intent(in)      :: n_records_G
       integer(int32), intent(in)      :: num_record_start
@@ -125,4 +124,4 @@ contains
 
    end subroutine read
 
-end module Type_Global
+end module type_global
