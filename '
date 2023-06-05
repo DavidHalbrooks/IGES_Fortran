@@ -26,7 +26,7 @@ module iges_master
       type(t_start)                   :: start_data
       type(t_Global)                  :: metadata_CAD
       type(t_metadata2)               :: metadata_Model
-      type(t_143), allocatable        :: t143_boundary_surfs(:)
+      type(t_143), dimension(:)       :: t143_boundary_surfs
 
    contains
       procedure, public  :: init_metadata => init
@@ -137,7 +137,7 @@ contains
 
    subroutine alloc_t143(this)
       class(Iges_Model) :: this
-      allocate (this%t143_boundary_surfs(this%metadata_model%directory_metadata%num_T143))
+      !allocate (this%t143_boundary_surfs(this%metadata_model%directory_metadata%num_T143))
       write (*, '(a)') '*** alloc_t143 completed'
    end subroutine alloc_t143
 
@@ -148,7 +148,7 @@ contains
          call this%t143_boundary_surfs(i)%read_t143_dir_entries(this%fileunit, &
                                                                 this%metadata_model%directory_metadata%T143_index_vector(i))
          !call this%t143_boundary_surfs(i)%print_t143_dir_entries
-         !print *, this%t143_boundary_surfs(i)%t143dir%sequence_num1
+         !print *, this%t143_boundary_surfs
       end do
       write (*, '(a)') '*** read_t143 completed'
    end subroutine read_t143

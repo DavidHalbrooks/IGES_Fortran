@@ -1,6 +1,7 @@
 module type_143
    use iso_fortran_env, only: int32, int64, real32, real64
    use read_ascii_pd, only: read_pd
+   use count_pd, only: count_pd_entries
    implicit none
 
    private
@@ -43,7 +44,9 @@ module type_143
       type(t_143_dir)   :: t143dir
       type(t_143_pd)    :: t143param
    contains
-      procedure :: read_dir_entries => read_entries
+      procedure :: read_t143_dir_entries => read_entries
+      procedure :: print_t143_dir_entries => print_entries
+      procedure :: read_t143_pd_entries => read_pd
    end type t_143
 
 contains
@@ -57,9 +60,8 @@ contains
       integer, parameter             :: num_dir_entries = 20
       character(len=80), allocatable :: buffer(:)
       character(len=160)             :: buffer_ascii
-      integer(int32), allocatable    :: temp_array_a(:)
-      integer(int32), allocatable    :: temp_array_b(:)
-      character(len=1)               :: type_letter
+      character(len=1)               :: type_letter1
+      character(len=1)               :: type_letter2
       integer                        :: i
 
       D_record_num = record_start_index
@@ -67,21 +69,46 @@ contains
       allocate (buffer(record_span))
       do i = 1, record_span
          read (fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
+         buffer_ascii = buffer(i - 1)//buffer(i)
          D_record_num = D_record_num + 1
       end do
 
-      allocate (temp_array_a(10))
-      allocate (temp_array_b(10))
-
-      read (buffer(1), fmt='(9i8,a1,i7)') temp_array_a(1:9), type_letter, temp_array_a(10)
-      read (buffer(2), fmt='(9i8,a1,i7)') temp_array_b(1:9), type_letter, temp_array_b(10)
-      print *
-      print *, temp_array_a
-      print *, temp_array_b
-
-      do i = 1, size(temp_array_a)
-      end do
+      read (buffer_ascii, fmt='(9i8,a1,i7,9i8,a1,i7)') &
+         this%t143dir%entity_type_num1, &
+         this%t143dir%parameter_data, &
+         this%t143dir%structure, &
+         this%t143dir%line_font, &
+         this%t143dir%level, &
+         this%t143dir%view, &
+         this%t143dir%transform_matrix, &
+         this%t143dir%label_disp_assoc, &
+         this%t143dir%status_number, &
+         type_letter1, &
+         this%t143dir%sequence_num1, &
+         this%t143dir%entity_type_num2, &
+         this%t143dir%line_weight, &
+         this%t143dir%color_number, &
+         this%t143dir%param_line_count, &
+         this%t143dir%form_number, &
+         this%t143dir%reserved_16, &
+         this%t143dir%reserved_17, &
+         this%t143dir%entity_label, &
+         this%t143dir%entity_subscript, &
+         type_letter2, &
+         this%t143dir%sequence_num2
 
    end subroutine read_entries
+
+   subroutine print_entries(this)
+      class(t_143), intent(inout) :: this
+
+      print *
+      print *, this%t143dir
+   end subroutine print_entries
+
+   subroutine read_pd(this)
+      class(t_143), intent(inout) :: this
+
+   end subroutine read_pd
 
 end module type_143
