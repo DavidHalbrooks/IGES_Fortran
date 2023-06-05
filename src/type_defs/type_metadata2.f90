@@ -19,6 +19,7 @@ module type_metadata2
       type(t_dir_meta)   :: directory_metadata
    contains
       procedure :: scan_directory_data => get_directory_metadata
+      procedure :: print_metadata2_info => print_metadata2
    end type t_metadata2
 
 contains
@@ -26,7 +27,10 @@ contains
    subroutine get_directory_metadata(this)
       class(t_metadata2), intent(inout) :: this
       call this%directory_metadata%get_metadata
-      call this%directory_metadata%print_dir_metadata
    end subroutine get_directory_metadata
 
+   subroutine print_metadata2(this)
+      class(t_metadata2), intent(inout) :: this
+      call this%directory_metadata%print_dir_metadata
+   end subroutine print_metadata2
 end module type_metadata2

@@ -110,20 +110,38 @@ contains
          D_record_num = D_record_num + stride
       end do
 
-      print *, this%T314_index_vector
-      print *, this%T141_index_vector
-      print *, this%T143_index_vector
-      print *, this%T126_index_vector
-      print *, this%T128_index_vector
-      print *, this%Undefined_index_vector
+      ! print *, 'T314 index vector      :', this%T314_index_vector
+      ! print *, 'T141 index vector      :', this%T141_index_vector
+      ! print *, 'T143 index vector      :', this%T143_index_vector
+      ! print *, 'T126 index vector      :', this%T126_index_vector
+      ! print *, 'T128 index vector      :', this%T128_index_vector
+      ! print *, 'Undefined index vector :', this%Undefined_index_vector
 
    end subroutine get_meta
 
    subroutine print_meta(this)
       class(t_dir_meta), intent(inout) :: this
+      print *
       print *, 'num_D_records:', this%num_D_records
       print *, 'D_records_start_index:', this%D_record_start_index
       print *, 'fileunit:', this%fileunit
+
+      print *
+      print *, 'Num of T314 Entities      :', this%num_T314
+      print *, 'Num of T143 Entities      :', this%num_T143
+      print *, 'Num of T141 Entities      :', this%num_T141
+      print *, 'Num of T128 Entities      :', this%num_T128
+      print *, 'Num of T126 Entities      :', this%num_T126
+      print *, 'Num of undefined entities :', this%num_unidentified_Entities
+
+      print *
+      print *, 'T314 index vector      :', this%T314_index_vector
+      print *, 'T143 index vector      :', this%T143_index_vector
+      print *, 'T141 index vector      :', this%T141_index_vector
+      print *, 'T128 index vector      :', this%T128_index_vector
+      print *, 'T126 index vector      :', this%T126_index_vector
+      print *, 'Undefined index vector :', this%Undefined_index_vector
+
    end subroutine print_meta
 
 end module type_dir_meta

@@ -16,6 +16,9 @@ program main
    call Iges%calc_record_index_pos
    call Iges%read_global_data
    call Iges%scan_directory_data
+   call Iges%print_metadata2_info
+   call Iges%allocate_t143
+   call Iges%read_t143_data
    !call Iges%alloc_directory_data
    !call Iges%print_metadata2_info
    call Iges%close_file

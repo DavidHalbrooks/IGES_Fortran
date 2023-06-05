@@ -1,12 +1,39 @@
-module Type143
+module type_143
 
    use read_ascii, only: read_ascii_PD
    implicit none
 
-   Private
-   Public :: T143, all_subs_T143
+   private
 
-   type T143
+   type, public :: t_143
+
+   end type t_143
+   type, public :: t_143_directory
+      integer :: entity_type_num1 = 0
+      integer :: parameter_data = 0
+      integer :: structure = 0
+      integer :: line_font = 0
+      integer :: level = 0
+      integer :: view = 0
+      integer :: transform_matrix = 0
+      integer :: label_disp_assoc = 0
+      integer :: status_number = 0
+      integer :: sequence_num1 = 0
+      integer :: entity_type_num2 = 0
+      integer :: line_weight = 0
+      integer :: color_number = 0
+      integer :: param_line_count = 0
+      integer :: form_number = 0
+      integer :: reserved_16 = 0
+      integer :: reserved_17 = 0
+      integer :: entity_label = 0
+      integer :: entity_subscript = 0
+      integer :: sequence_num2 = 0
+   contains
+      procedure :: read_entries => read
+   end type t_143_directory
+
+   type, public :: t_143_pd
       integer              :: Type_BS = 0
       integer              :: SPTR = 0
       integer              :: N = 0
@@ -19,15 +46,13 @@ module Type143
       procedure  :: read_ascii => read_ascii_data_T143
       procedure  :: alloc => allocate_init_T143
       procedure  :: read_data => read_BDPT_data_T143
-      !procedure  :: deallocate    => deallocate_T143
-      !procedure  :: eval_props    => evaluate_param_properties_T143
       procedure  :: call_all_subs => all_subs_T143
-   end type T143
+   end type t_143_pd
 
 contains
 
    subroutine all_subs_T143(this, Type_ID, num_PD_entries, ascii_Parameter_Data)
-      class(T143), intent(inout) :: this
+      class(t_143_pd), intent(inout) :: this
       integer, intent(in)       :: Type_ID
       character(len=4000), intent(in) :: ascii_Parameter_Data
       integer, intent(in)  :: num_PD_entries
@@ -37,8 +62,6 @@ contains
       call read_ascii_data_T143(this)
       call allocate_init_T143(this)
       call read_BDPT_data_T143(this)
-      !call deallocate_T143(this)
-      !call evaluate_param_properties_T143(this)
    end subroutine all_subs_T143
 
    subroutine read_ascii_data_T143(this)
@@ -78,4 +101,4 @@ contains
 !    class(T143) :: this
 !  end subroutine evaluate_param_properties_T143
 
-end module Type143
+end module type_143

@@ -1,14 +1,14 @@
-module count_PD
+module count_pd
 
    use iso_fortran_env, only: int32, int64, real32, real64
    implicit none
 
    private
-   public :: count_PD_entries
+   public :: count_pd_entries
 
 contains
 
-   function count_PD_entries(buffer) result(n_PD_entries)
+   function count_pd_entries(buffer) result(n_PD_entries)
       character(len=4000), intent(in) :: buffer
       integer(int32)     :: n_PD_entries
       integer(int32)     :: entry_loc
@@ -26,6 +26,6 @@ contains
          end if
       end do
       n_PD_entries = n_PD_entries + 1
-   end function count_PD_entries
+   end function count_pd_entries
 
-end module count_PD
+end module count_pd

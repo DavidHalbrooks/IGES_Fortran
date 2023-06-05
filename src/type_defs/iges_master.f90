@@ -7,8 +7,7 @@ module iges_master
    use type_global, only: t_global
    use type_metadata2, only: t_metadata2
    use type_directory, only: t_directory
-   !use Type_Dir_Meta, only: Dir_meta
-   !use Type_Parametric, only: Parametric
+   use type_143, only: t_143
 
    ! External functions and subroutines (update to type-bound-procedures)
    use open_close, only: open_file, close_file
@@ -27,8 +26,7 @@ module iges_master
       type(t_start)                   :: start_data
       type(t_Global)                  :: metadata_CAD
       type(t_metadata2)               :: metadata_Model
-      type(t_directory), allocatable  :: dir_entries(:)
-      !type(Parametric), allocatable :: Parametric_data(:)
+      type(t_143), allocatable        :: t143_boundary_surfs(:)
 
    contains
       procedure, public  :: init_metadata => init
@@ -40,10 +38,9 @@ module iges_master
       procedure, public  :: calc_record_index_pos => calc_indices
       procedure, public  :: read_global_data => read_global
       procedure, public  :: scan_directory_data => scan_directory
-      procedure, public  :: alloc_directory_data => alloc_directory
-      procedure, public  :: read_directory_data => read_directory
-      !procedure, public  :: print_metadata2_info => print_metadata2
-      !procedure, public  :: alloc_parametric_data => alloc_parametric
+      procedure, public  :: print_metadata2_info => print_metadata2
+      procedure, public  :: allocate_t143 => alloc_t143
+      procedure, public  :: read_t143_data => read_t143
       procedure, public  :: close_file => close_iges_file
    end type Iges_Model
 
@@ -133,35 +130,26 @@ contains
 
    subroutine print_metadata2(this)
       class(Iges_Model), intent(inout) :: this
-      !print *, this%Metadata_Model
-      !print *, this%Metadata_Model%T126_index_vector
+      !write (*, '(a)') this%metadata_model%directory_metadata
+      call this%Metadata_Model%directory_metadata%print_dir_metadata
       write (*, '(a)') '*** print_metadata2 completed'
    end subroutine print_metadata2
 
-   subroutine alloc_directory(this)
-      class(Iges_Model), intent(inout) :: this
-!      allocate (this%Dir_Entries(this%Metadata_Model%Directory_Metadata%num_D_records))
-!      print *, 'size Dir_Entries:', size(this%Dir_Entries)
-      write (*, '(a)') '*** alloc_directory completed'
-   end subroutine alloc_directory
+   subroutine alloc_t143(this)
+      class(Iges_Model) :: this
+      allocate (this%t143_boundary_surfs(this%metadata_model%directory_metadata%num_T143))
+      write (*, '(a)') '*** alloc_t143 completed'
+   end subroutine alloc_t143
 
-   subroutine read_directory(this)
-      class(Iges_Model), intent(inout) :: this
-      ! call this%Dir_Entries%read_entries(this%fileunit, &
-      !                                    this%Metadata_Model%num_D_records, &
-      !                                    this%Metadata_Model%D_record_start)
-      ! call this%Dir_Entries%read_entries(this%fileunit, &
-      !                                    this%Metadata_Model%D_record_start)
-      write (*, '(a)') '*** read_directory completed'
-      print *, this%Dir_Entries
-   end subroutine read_directory
-
-   ! subroutine alloc_paramatric(this)
-   !    class(Iges_Model), intent(inout) :: this
-   !    allocate (this%Parametric_Data(this%Metadata_Model%num_P_records))
-   !    print *, 'size Parametric_Data:', size(this%Parametric_Data)
-   !    write (*, '(a)') '*** alloc_parameter_data completed'
-   ! end subroutine alloc_parametric
+   subroutine read_t143(this)
+      class(Iges_Model) :: this
+      integer(int32) :: i
+      do i = 1, size(this%t143_boundary_surfs)
+         call this%t143_boundary_surfs(1)%read_dir_entries(this%fileunit, &
+                                                           this%metadata_model%directory_metadata%T143_index_vector(i))
+      end do
+      write (*, '(a)') '*** read_t143 completed'
+   end subroutine read_t143
 
    subroutine close_iges_file(this)
       class(Iges_Model), intent(inout) :: this
