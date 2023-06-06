@@ -109,6 +109,7 @@ contains
       this%Metadata_Model%Directory_metadata%D_record_start_index = record_pos_vector(2)
       this%Metadata_Model%P_record_start = record_pos_vector(3)
       this%Metadata_Model%T_record_start = record_pos_vector(4)
+      !!print *, 'The record start values are: ', record_pos_vector
       write (*, '(a)') '*** calc_read_pos completed'
    end subroutine calc_indices
 
@@ -147,7 +148,10 @@ contains
       do i = 1, size(this%t143_boundary_surfs)
          call this%t143_boundary_surfs(i)%read_t143_dir_entries(this%fileunit, &
                                                                 this%metadata_model%directory_metadata%T143_index_vector(i))
-         !call this%t143_boundary_surfs(i)%print_t143_dir_entries
+
+         call this%t143_boundary_surfs(i)%read_t143_pd_entries(this%fileunit, &
+                                                               this%metadata_model%P_record_start)
+         !!call this%t143_boundary_surfs(i)%print_t143_dir_entries
          !print *, this%t143_boundary_surfs(i)%t143dir%sequence_num1
       end do
       write (*, '(a)') '*** read_t143 completed'

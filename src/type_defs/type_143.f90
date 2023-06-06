@@ -34,10 +34,8 @@ module type_143
       integer              :: SPTR = 0
       integer              :: N = 0
       integer, allocatable :: BDPT(:)
-      integer, allocatable :: Parameter_Data(:)
       integer              :: n_PD_entries = 0
       integer              :: Type_ID = 0
-      character(len=4000)  :: ascii_Parameter_Data = ''
    end type t_143_pd
 
    type, public :: t_143
@@ -46,7 +44,7 @@ module type_143
    contains
       procedure :: read_t143_dir_entries => read_entries
       procedure :: print_t143_dir_entries => print_entries
-      procedure :: read_t143_pd_entries => read_pd
+      procedure :: read_t143_pd_entries => read_pd_entries
    end type t_143
 
 contains
@@ -101,14 +99,50 @@ contains
 
    subroutine print_entries(this)
       class(t_143), intent(inout) :: this
-
       print *
       print *, this%t143dir
    end subroutine print_entries
 
-   subroutine read_pd(this)
-      class(t_143), intent(inout) :: this
+   subroutine read_pd_entries(this, fileunit, P_record_start_index)
+      class(t_143), intent(inout)    :: this
+      integer(int32), intent(in)     :: fileunit
+      integer(int32), intent(in)     :: P_record_start_index
+      integer(int32)                 :: record_start_index
+      integer(int32)                 :: num_records
+      integer(int32)                 :: num_pd_entries
+      integer(int32)                 :: type_id
+      integer(int32)                 :: temp
+      character(len=4000)            :: ascii_pd_buffer
 
-   end subroutine read_pd
+      ascii_pd_buffer = ''
+      num_pd_entries = 0
+      temp = 0
+
+      record_start_index = (P_record_start_index + &
+                            this%t143dir%parameter_data - 1)
+      call read_pd(fileunit, &
+                   record_start_index, &
+                   this%t143dir%param_line_count, &
+                   type_id, &
+                   ascii_pd_buffer)
+      ! NOTE: Future work: Include the num_pd_entries in the pd metadata
+      num_pd_entries = count_pd_entries(ascii_pd_buffer)
+
+      read (ascii_pd_buffer, fmt=*) temp, temp, temp, this%t143param%N
+      allocate (this%t143param%BDPT(this%t143param%N))
+
+      print *
+      print *, trim(ascii_pd_buffer)
+      ascii_pd_buffer = trim(ascii_pd_buffer)
+      read (ascii_pd_buffer, fmt=*) &
+         this%t143param%Type_ID, &
+         this%t143param%Type_BS, &
+         this%t143param%SPTR, &
+         this%t143param%N, &
+         this%t143param%BDPT
+
+      print *, this%t143param%BDPT
+
+   end subroutine read_pd_entries
 
 end module type_143
