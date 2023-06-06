@@ -2,6 +2,8 @@ module type_143
    use iso_fortran_env, only: int32, int64, real32, real64
    use read_ascii_pd, only: read_pd
    use count_pd, only: count_pd_entries
+   use type_128, only: t_128
+   !use type_128, only: read_t128_dir_entries
    implicit none
 
    private
@@ -38,20 +40,47 @@ module type_143
       integer              :: Type_ID = 0
    end type t_143_pd
 
+   type, public :: t_143_deps
+      type(t_128) :: t128dir
+      type(t_128) :: t128param
+      !type(t_141) :: t128_data
+   end type t_143_deps
+
+   type, private :: share_fileinfo_data
+      integer(int32) :: fileunit
+      integer(int32) :: D_section_start_index
+      integer(int32) :: P_section_start_index
+   end type share_fileinfo_data
+
    type, public :: t_143
       type(t_143_dir)   :: t143dir
       type(t_143_pd)    :: t143param
+      type(t_143_deps)  :: t128dep
+      type(share_fileinfo_data)  :: share_data
    contains
+      procedure :: exchange_share_data => exchange_share
       procedure :: read_t143_dir_entries => read_entries
       procedure :: print_t143_dir_entries => print_entries
       procedure :: read_t143_pd_entries => read_pd_entries
+      procedure :: read_t128_dir_entries => read_t128_dir
    end type t_143
 
 contains
 
-   subroutine read_entries(this, fileunit, record_start_index)
+   subroutine exchange_share(this, fileunit, D_start_index, P_start_index)
+      class(t_143), intent(inout) :: this
+      integer(int32), intent(in) :: fileunit
+      integer(int32), intent(in) :: D_start_index
+      integer(int32), intent(in) :: P_start_index
+      ! Send the fileunit to share_data for use by children types
+      this%share_data%fileunit = fileunit
+      this%share_data%D_section_start_index = D_start_index
+      this%share_data%P_section_start_index = P_start_index
+
+   end subroutine exchange_share
+
+   subroutine read_entries(this, record_start_index)
       class(t_143), intent(inout)    :: this
-      integer(int32), intent(in)     :: fileunit
       integer(int32), intent(in)     :: record_start_index
       integer(int32)                 :: D_record_num
       integer, parameter             :: record_span = 2
@@ -66,7 +95,7 @@ contains
 
       allocate (buffer(record_span))
       do i = 1, record_span
-         read (fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
+         read (this%share_data%fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
          buffer_ascii = buffer(i - 1)//buffer(i)
          D_record_num = D_record_num + 1
       end do
@@ -103,10 +132,8 @@ contains
       print *, this%t143dir
    end subroutine print_entries
 
-   subroutine read_pd_entries(this, fileunit, P_record_start_index)
+   subroutine read_pd_entries(this)
       class(t_143), intent(inout)    :: this
-      integer(int32), intent(in)     :: fileunit
-      integer(int32), intent(in)     :: P_record_start_index
       integer(int32)                 :: record_start_index
       integer(int32)                 :: num_records
       integer(int32)                 :: num_pd_entries
@@ -118,9 +145,9 @@ contains
       num_pd_entries = 0
       temp = 0
 
-      record_start_index = (P_record_start_index + &
+      record_start_index = (this%share_data%P_section_start_index + &
                             this%t143dir%parameter_data - 1)
-      call read_pd(fileunit, &
+      call read_pd(this%share_data%fileunit, &
                    record_start_index, &
                    this%t143dir%param_line_count, &
                    type_id, &
@@ -144,5 +171,14 @@ contains
       print *, this%t143param%BDPT
 
    end subroutine read_pd_entries
+
+   subroutine read_t128_dir(this)
+      class(t_143), intent(inout) :: this
+      integer(int32)              :: record_start_index
+      call this%t128dep%t128dir%exchange_share_data_t128(this%share_data%fileunit, &
+                                                         this%share_data%D_section_start_index, &
+                                                         this%share_data%P_section_start_index)
+
+   end subroutine read_t128_dir
 
 end module type_143

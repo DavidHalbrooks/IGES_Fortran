@@ -13,6 +13,7 @@ module type_metadata2
       integer(int32)     :: num_D_records
       integer(int32)     :: num_P_records
       integer(int32)     :: num_T_records
+      integer(int32)     :: D_record_start
       integer(int32)     :: G_record_start
       integer(int32)     :: P_record_start
       integer(int32)     :: T_record_start

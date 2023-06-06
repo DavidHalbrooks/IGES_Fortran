@@ -39,7 +39,7 @@ module iges_master
       procedure, public  :: read_global_data => read_global
       procedure, public  :: scan_directory_data => scan_directory
       procedure, public  :: print_metadata2_info => print_metadata2
-      procedure, public  :: allocate_t143 => alloc_t143
+      procedure, public  :: allocate_t143 => alloc_t143  ! < This is for the boundary surfs
       procedure, public  :: read_t143_data => read_t143
       procedure, public  :: close_file => close_iges_file
    end type Iges_Model
@@ -146,11 +146,13 @@ contains
       class(Iges_Model) :: this
       integer(int32) :: i
       do i = 1, size(this%t143_boundary_surfs)
-         call this%t143_boundary_surfs(i)%read_t143_dir_entries(this%fileunit, &
-                                                                this%metadata_model%directory_metadata%T143_index_vector(i))
+         call this%t143_boundary_surfs(i)%exchange_share_data(this%fileunit, &
+                                                              this%metadata_model%D_record_start, &
+                                                              this%metadata_model%P_record_start)
 
-         call this%t143_boundary_surfs(i)%read_t143_pd_entries(this%fileunit, &
-                                                               this%metadata_model%P_record_start)
+         call this%t143_boundary_surfs(i)%read_t143_dir_entries(this%metadata_model%directory_metadata%T143_index_vector(i))
+
+         call this%t143_boundary_surfs(i)%read_t143_pd_entries
          !!call this%t143_boundary_surfs(i)%print_t143_dir_entries
          !print *, this%t143_boundary_surfs(i)%t143dir%sequence_num1
       end do

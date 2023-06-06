@@ -15,6 +15,7 @@ src = files([
   'src/utils/read_global_ascii.f90',
   'src/type_defs/type_143.f90',
   'src/utils/read_ascii_pd.f90',
-  'src/utils/count_pd.f90'
+  'src/utils/count_pd.f90',
+  'src/type_defs/type_128.f90'
 ])
 executable('import', src)
