@@ -40,9 +40,10 @@ module type_143
       integer              :: Type_ID = 0
    end type t_143_pd
 
+   !! NOTE: THIS MAY NOT BE NEEDED
    type, public :: t_143_deps
-      type(t_128) :: t128dir
-      type(t_128) :: t128param
+      type(t_128) :: dep_t128
+      !type(t_128) :: dep_t141p
       !type(t_141) :: t128_data
    end type t_143_deps
 
@@ -55,8 +56,8 @@ module type_143
    type, public :: t_143
       type(t_143_dir)   :: t143dir
       type(t_143_pd)    :: t143param
-      type(t_143_deps)  :: t128dep
-      type(share_fileinfo_data)  :: share_data
+      type(t_128)       :: dep_t128
+      type(share_fileinfo_data)  :: t143sharedata
    contains
       procedure :: exchange_share_data => exchange_share
       procedure :: read_t143_dir_entries => read_entries
@@ -73,9 +74,9 @@ contains
       integer(int32), intent(in) :: D_start_index
       integer(int32), intent(in) :: P_start_index
       ! Send the fileunit to share_data for use by children types
-      this%share_data%fileunit = fileunit
-      this%share_data%D_section_start_index = D_start_index
-      this%share_data%P_section_start_index = P_start_index
+      this%t143sharedata%fileunit = fileunit
+      this%t143sharedata%D_section_start_index = D_start_index
+      this%t143sharedata%P_section_start_index = P_start_index
 
    end subroutine exchange_share
 
@@ -95,7 +96,7 @@ contains
 
       allocate (buffer(record_span))
       do i = 1, record_span
-         read (this%share_data%fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
+         read (this%t143sharedata%fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
          buffer_ascii = buffer(i - 1)//buffer(i)
          D_record_num = D_record_num + 1
       end do
@@ -145,9 +146,9 @@ contains
       num_pd_entries = 0
       temp = 0
 
-      record_start_index = (this%share_data%P_section_start_index + &
+      record_start_index = (this%t143sharedata%P_section_start_index + &
                             this%t143dir%parameter_data - 1)
-      call read_pd(this%share_data%fileunit, &
+      call read_pd(this%t143sharedata%fileunit, &
                    record_start_index, &
                    this%t143dir%param_line_count, &
                    type_id, &
@@ -175,10 +176,19 @@ contains
    subroutine read_t128_dir(this)
       class(t_143), intent(inout) :: this
       integer(int32)              :: record_start_index
-      call this%t128dep%t128dir%exchange_share_data_t128(this%share_data%fileunit, &
-                                                         this%share_data%D_section_start_index, &
-                                                         this%share_data%P_section_start_index)
-
+      call this%dep_t128%exchange_sharedata_t128(this%t143sharedata%fileunit, &
+                                                 this%t143sharedata%D_section_start_index, &
+                                                 this%t143sharedata%P_section_start_index)
+      call this%dep_t128%read_t128_dir_entries(this%t143param%SPTR)
+      !call this%t128dep%t128dir%print_t128_dir_entries
+      call this%dep_t128%read_ascii_t128_pd
+      call this%dep_t128%allocate_t128_pd_initial
+      call this%dep_t128%read_t128pd_integers
+      call this%dep_t128%t128_index_calculations
+      call this%dep_t128%allocate_t128_pd_vectors
+      call this%dep_t128%initialize_t128_pd_vectors
+      call this%dep_t128%read_in_t128_pd_data
+      call this%dep_t128%print_t128_data
    end subroutine read_t128_dir
 
 end module type_143
