@@ -154,7 +154,8 @@ contains
          call this%t143_boundary_surfs(i)%read_t143_dir_entries(this%metadata_model%directory_metadata%T143_index_vector(i))
 
          call this%t143_boundary_surfs(i)%read_t143_pd_entries
-         call this%t143_boundary_surfs(i)%read_t128_dir_entries
+         call this%t143_boundary_surfs(i)%read_t128_data
+         call this%t143_boundary_surfs(i)%read_t141_data
          !!call this%t143_boundary_surfs(i)%print_t143_dir_entries
          !print *, this%t143_boundary_surfs(i)%t143dir%sequence_num1
       end do

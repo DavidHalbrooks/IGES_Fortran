@@ -7,42 +7,44 @@ module type_128
    private
 
    type, public :: t_128_dir
-      integer :: entity_type_num1 = 0
-      integer :: parameter_data = 0
-      integer :: structure = 0
-      integer :: line_font = 0
-      integer :: level = 0
-      integer :: view = 0
-      integer :: transform_matrix = 0
-      integer :: label_disp_assoc = 0
-      integer :: status_number = 0
-      integer :: sequence_num1 = 0
-      integer :: entity_type_num2 = 0
-      integer :: line_weight = 0
-      integer :: color_number = 0
-      integer :: param_line_count = 0
-      integer :: form_number = 0
-      integer :: reserved_16 = 0
-      integer :: reserved_17 = 0
-      integer :: entity_label = 0
-      integer :: entity_subscript = 0
-      integer :: sequence_num2 = 0
+      integer(int32) :: entity_type_num1 = 0
+      integer(int32) :: parameter_data = 0
+      integer(int32) :: structure = 0
+      integer(int32) :: line_font = 0
+      integer(int32) :: level = 0
+      integer(int32) :: view = 0
+      integer(int32) :: transform_matrix = 0
+      integer(int32) :: label_disp_assoc = 0
+      integer(int32) :: status_number = 0
+      integer(int32) :: sequence_num1 = 0
+      integer(int32) :: entity_type_num2 = 0
+      integer(int32) :: line_weight = 0
+      integer(int32) :: color_number = 0
+      integer(int32) :: param_line_count = 0
+      integer(int32) :: form_number = 0
+      integer(int32) :: reserved_16 = 0
+      integer(int32) :: reserved_17 = 0
+      integer(int32) :: entity_label = 0
+      integer(int32) :: entity_subscript = 0
+      integer(int32) :: sequence_num2 = 0
    end type t_128_dir
 
    type, public :: t_128_pd
-      integer                   :: K1 = 0
-      integer                   :: K2 = 0
-      integer                   :: M1 = 0
-      integer                   :: M2 = 0
-      integer                   :: prop1 = 0
-      integer                   :: prop2 = 0
-      integer                   :: prop3 = 0
-      integer                   :: prop4 = 0
-      integer                   :: prop5 = 0
+      integer(int32)            :: K1 = 0
+      integer(int32)            :: K2 = 0
+      integer(int32)            :: M1 = 0
+      integer(int32)            :: M2 = 0
+      integer(int32)            :: prop1 = 0
+      integer(int32)            :: prop2 = 0
+      integer(int32)            :: prop3 = 0
+      integer(int32)            :: prop4 = 0
+      integer(int32)            :: prop5 = 0
       real(real64), allocatable :: S(:)
       real(real64), allocatable :: T(:)
-      real(real64), allocatable :: W(:)
-      real(real64), allocatable :: P(:)
+      real(real64), allocatable :: W(:, :)
+      real(real64), allocatable :: Px(:, :)
+      real(real64), allocatable :: Py(:, :)
+      real(real64), allocatable :: Pz(:, :)
       real(real64), allocatable :: U(:)
       real(real64), allocatable :: V(:)
    end type t_128_pd
@@ -54,30 +56,13 @@ module type_128
       integer(int32)              :: num_PD_ints = 0
       integer(int32)              :: num_PD_reals = 0
       integer(int32)              :: Type_ID = 0
+      character(len=160)          :: ascii_t128_dir_data = ''
       character(len=4000)         :: ascii_t128_pd_data = ''
       integer(int32)              :: N1 = 0
       integer(int32)              :: N2 = 0
       integer(int32)              :: A = 0
       integer(int32)              :: B = 0
       integer(int32)              :: C = 0
-      integer(int32)              :: i_first_knot_S = 0
-      integer(int32)              :: i_last_knot_S = 0
-      integer(int32)              :: i_first_knot_T = 0
-      integer(int32)              :: i_last_knot_T = 0
-      integer(int32)              :: i_first_weight_W = 0
-      integer(int32)              :: i_last_weight_W = 0
-      integer(int32)              :: i_first_point_P = 0
-      integer(int32)              :: i_last_point_P = 0
-      integer(int32)              :: i_first_param_U = 0
-      integer(int32)              :: i_last_param_U = 0
-      integer(int32)              :: i_first_param_V = 0
-      integer(int32)              :: i_last_param_V = 0
-      integer(int32)              :: n_knots_S = 0
-      integer(int32)              :: n_knots_T = 0
-      integer(int32)              :: n_weights_W = 0
-      integer(int32)              :: n_control_points_P = 0
-      integer(int32)              :: n_params_U = 0
-      integer(int32)              :: n_params_V = 0
       integer(int32)              :: n_bezier_patches = 0
    end type t_128_metadata
 
@@ -93,7 +78,6 @@ module type_128
       type(t_128_metadata)   :: t128metadata
       type(t_128_sharedata)  :: t128sharedata
    contains
-      !procedure  :: test_type => test_type_T128
       procedure :: exchange_sharedata_t128 => exchange_share
       procedure :: read_t128_dir_entries => read_entries
       procedure :: read_ascii_t128_pd => read_ascii_pd
@@ -103,7 +87,9 @@ module type_128
       procedure :: allocate_t128_pd_vectors => allocate_pd_vectors
       procedure :: initialize_t128_pd_vectors => initialize_pd_vectors
       procedure :: read_in_t128_pd_data => read_in_pd_data
-      procedure :: print_t128_data => print_data
+      procedure :: print_t128_dir_data => print_dir_data
+      procedure :: print_t128_pd_data => print_pd_data
+      !procedure  :: test_type => test_type_T128
    end type t_128
 
 contains
@@ -138,9 +124,14 @@ contains
       allocate (buffer(record_span))
       do i = 1, record_span
          read (this%t128sharedata%fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
-         buffer_ascii = buffer(i - 1)//buffer(i)
          D_record_num = D_record_num + 1
+         if (i < 2) then
+            buffer(i) = trim(buffer(i))
+         else
+            buffer_ascii = trim(buffer(i - 1))//trim(buffer(i))
+         end if
       end do
+      this%t128metadata%ascii_t128_dir_data = buffer_ascii
 
       read (buffer_ascii, fmt='(9i8,a1,i7,9i8,a1,i7)') &
          this%t128dir%entity_type_num1, &
@@ -234,35 +225,18 @@ contains
       this%t128metadata%A = (this%t128metadata%N1 + (2*this%t128param%M1))
       this%t128metadata%B = (this%t128metadata%N2 + (2*this%t128param%M2))
       this%t128metadata%C = ((1 + this%t128param%K1)*(1 + this%t128param%K2))
-      this%t128metadata%i_first_knot_S = 10
-      this%t128metadata%i_last_knot_S = (10 + this%t128metadata%A)
-      this%t128metadata%i_first_knot_T = (11 + this%t128metadata%A)
-      this%t128metadata%i_last_knot_T = (11 + this%t128metadata%A + this%t128metadata%B)
-      this%t128metadata%i_first_weight_W = (12 + this%t128metadata%A + this%t128metadata%B)
-      this%t128metadata%i_last_weight_W = (11 + this%t128metadata%A + this%t128metadata%B + this%t128metadata%C)
-      this%t128metadata%i_first_point_P = (12 + this%t128metadata%A + this%t128metadata%B + this%t128metadata%C)
-      this%t128metadata%i_last_point_P = (11 + this%t128metadata%A + this%t128metadata%B + (4*this%t128metadata%C))
-      this%t128metadata%i_first_param_U = (12 + this%t128metadata%A + this%t128metadata%B + (4*this%t128metadata%C))
-      this%t128metadata%i_last_param_U = (13 + this%t128metadata%A + this%t128metadata%B + (4*this%t128metadata%C))
-      this%t128metadata%i_first_param_V = (14 + this%t128metadata%A + this%t128metadata%B + (4*this%t128metadata%C))
-      this%t128metadata%i_last_param_V = (15 + this%t128metadata%A + this%t128metadata%B + (4*this%t128metadata%C))
-      this%t128metadata%n_knots_S = (this%t128metadata%i_last_knot_S - this%t128metadata%i_first_knot_S + 1)
-      this%t128metadata%n_knots_T = (this%t128metadata%i_last_knot_T - this%t128metadata%i_first_knot_T + 1)
-      this%t128metadata%n_weights_W = (this%t128metadata%i_last_weight_W - this%t128metadata%i_first_weight_W + 1)
-      this%t128metadata%n_control_points_P = (this%t128metadata%i_last_point_P - this%t128metadata%i_first_point_P + 1)
-      this%t128metadata%n_params_U = (this%t128metadata%i_last_param_U - this%t128metadata%i_first_param_U + 1)
-      this%t128metadata%n_params_V = (this%t128metadata%i_last_param_V - this%t128metadata%i_first_param_V + 1)
-      !this%t128metadata%n_bezier_patches = this%t128metadata%n_control_points - this%t128metadata%K + 1 !Update for patches DNH: 01-13-23
    end subroutine index_calcs
 
    subroutine allocate_pd_vectors(this)
       class(t_128) :: this
-      allocate (this%t128param%S(this%t128metadata%n_knots_S))
-      allocate (this%t128param%T(this%t128metadata%n_knots_T))
-      allocate (this%t128param%W(this%t128metadata%n_weights_W))
-      allocate (this%t128param%P(this%t128metadata%n_control_points_P))
-      allocate (this%t128param%U(this%t128metadata%n_params_U))
-      allocate (this%t128param%V(this%t128metadata%n_params_V))
+      allocate (this%t128param%S(-this%t128param%M1:(this%t128metadata%N1 + this%t128param%M1)))
+      allocate (this%t128param%T(-this%t128param%M2:(this%t128metadata%N2 + this%t128param%M2)))
+      allocate (this%t128param%W(0:this%t128param%K1, 0:this%t128param%K2))
+      allocate (this%t128param%Px(0:this%t128param%K1, 0:this%t128param%K2))
+      allocate (this%t128param%Py(0:this%t128param%K1, 0:this%t128param%K2))
+      allocate (this%t128param%Pz(0:this%t128param%K1, 0:this%t128param%K2))
+      allocate (this%t128param%U(0:1))
+      allocate (this%t128param%V(0:1))
    end subroutine allocate_pd_vectors
 
    subroutine initialize_pd_vectors(this)
@@ -270,43 +244,74 @@ contains
       this%t128param%S = 0.0
       this%t128param%T = 0.0
       this%t128param%W = 0.0
-      this%t128param%P = 0.0
+      this%t128param%Px = 0.0
+      this%t128param%Py = 0.0
+      this%t128param%Pz = 0.0
       this%t128param%U = 0.0
       this%t128param%V = 0.0
    end subroutine initialize_pd_vectors
 
    subroutine read_in_pd_data(this)
       class(t_128) :: this
-      this%t128param%S = this%t128metadata%Parameter_reals(this%t128metadata%i_first_knot_S:this%t128metadata%i_last_knot_S)
-      this%t128param%T = this%t128metadata%Parameter_reals(this%t128metadata%i_first_knot_T:this%t128metadata%i_last_knot_T)
-      this%t128param%W = this%t128metadata%Parameter_reals(this%t128metadata%i_first_weight_W:this%t128metadata%i_last_weight_W)
-      this%t128param%P = this%t128metadata%Parameter_reals(this%t128metadata%i_first_point_P:this%t128metadata%i_last_point_P)
-      this%t128param%U = this%t128metadata%Parameter_reals(this%t128metadata%i_first_param_U:this%t128metadata%i_last_param_U)
-      this%t128param%V = this%t128metadata%Parameter_reals(this%t128metadata%i_first_param_V:this%t128metadata%i_last_param_V)
+      integer(int32) :: w_n
+      integer(int32) :: index, stride
+      integer(int32) :: i, j
+
+      this%t128param%S = &
+         this%t128metadata%Parameter_reals(10:10 + this%t128metadata%A)
+      this%t128param%T = &
+         this%t128metadata%Parameter_reals(11 + this%t128metadata%A:11 + this%t128metadata%A + this%t128metadata%B)
+
+      index = (12 + this%t128metadata%A + &
+               this%t128metadata%B)
+      do j = 0, this%t128param%K2
+         do i = 0, this%t128param%K1
+            this%t128param%W(i, j) = this%t128metadata%Parameter_reals(index)
+            index = index + 1
+         end do
+      end do
+
+      stride = 3
+      index = (12 + this%t128metadata%A + &
+               this%t128metadata%B + &
+               this%t128metadata%C)
+      do j = 0, this%t128param%K2
+         do i = 0, this%t128param%K1
+            this%t128param%Px(i, j) = this%t128metadata%Parameter_reals(index)
+            this%t128param%Py(i, j) = this%t128metadata%Parameter_reals(index + 1)
+            this%t128param%Pz(i, j) = this%t128metadata%Parameter_reals(index + 2)
+            index = index + stride
+         end do
+      end do
+
+     this%t128param%U(0) = this%t128metadata%Parameter_reals(12 + this%t128metadata%A + this%t128metadata%B + 4*this%t128metadata%C)
+     this%t128param%U(1) = this%t128metadata%Parameter_reals(13 + this%t128metadata%A + this%t128metadata%B + 4*this%t128metadata%C)
+     this%t128param%V(0) = this%t128metadata%Parameter_reals(14 + this%t128metadata%A + this%t128metadata%B + 4*this%t128metadata%C)
+     this%t128param%V(1) = this%t128metadata%Parameter_reals(15 + this%t128metadata%A + this%t128metadata%B + 4*this%t128metadata%C)
    end subroutine read_in_pd_data
 
-   subroutine print_data(this)
-      class(t_128), intent(inout) :: this
-      print *, 'T128 Directory data:'
-      print *, this%t128dir
+   subroutine print_dir_data(this)
+      class(t_128) :: this
       print *
-      print *, 'T128 S data: '
-      write (*, *) this%t128param%S
+      print *, 'T128 Directory Data'
+      print *, this%t128metadata%ascii_t128_dir_data(1:80)
+      print *, this%t128metadata%ascii_t128_dir_data(81:160)
+      !print *, this%t128dir
+   end subroutine print_dir_data
+
+   subroutine print_pd_data(this)
+      class(t_128) :: this
       print *
-      print *, 'T128 T data: '
-      write (*, *) this%t128param%T
-      print *
-      print *, 'T128 W data: '
-      write (*, *) this%t128param%W
-      print *
-      print *, 'T128 P data: '
-      write (*, *) this%t128param%P
-      print *
-      print *, 'T128 U data: '
-      write (*, *) this%t128param%U
-      print *
-      print *, 'T128 V data: '
-      write (*, *) this%t128param%V
-   end subroutine print_data
+      print *, 'T128 Parameter Data'
+      !print *, trim(this%t128metadata%ascii_t128_pd_data)
+      print *, 'S :', this%t128param%S(-this%t128param%M1:this%t128metadata%N1 + this%t128param%M1)
+      print *, 'T :', this%t128param%T(-this%t128param%M2:this%t128metadata%N2 + this%t128param%M2)
+      print *, 'W :', this%t128param%W
+      print *, 'Px :', this%t128param%Px
+      print *, 'Py :', this%t128param%Py
+      print *, 'Pz :', this%t128param%Pz
+      print *, 'U :', this%t128param%U
+      print *, 'V :', this%t128param%V
+   end subroutine print_pd_data
 
 end module type_128

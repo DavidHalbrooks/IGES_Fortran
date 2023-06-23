@@ -75,6 +75,9 @@ type_global.mod := src/type_defs/type_global.f90.o
 type_dir_meta.mod := src/type_defs/type_dir_meta.f90.o
 type_metadata2.mod := src/type_defs/type_metadata2.f90.o
 type_directory.mod := src/type_defs/type_directory.f90.o
+type_143.mod := src/type_defs/type_143.f90.o
+type_128.mod := src/type_defs/type_128.f90.o
+type_141.mod := src/type_defs/type_141.f90.o
 
 # utils dir
 open_close.mod := src/utils/open_close.f90.o
@@ -82,6 +85,10 @@ filename.mod := src/utils/filename.f90.o
 num_records.mod := src/utils/num_records.f90.o
 record_pos_calcs.mod := src/utils/record_pos_calcs.f90.o
 read_global_ascii.mod := src/utils/read_global_ascii.f90.o
+count_pd.mod := src/utils/count_pd.f90.o
+num_records.mod := src/utils/num_records.f90.o
+read_ascii_pd.mod := src/utils/read_ascii_pd.f90.o
+record_pos_calcs.mod := src/utils/record_pos_calcs.f90.o
 
 # No dependencies
 src/utils/filename.f90.o:

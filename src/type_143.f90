@@ -3,41 +3,39 @@ module type_143
    use read_ascii_pd, only: read_pd
    use count_pd, only: count_pd_entries
    use type_128, only: t_128
-   !use type_128, only: read_t128_dir_entries
+   use type_141 !, only: t_141
    implicit none
 
    private
 
    type, public :: t_143_dir
-      integer :: entity_type_num1 = 0
-      integer :: parameter_data = 0
-      integer :: structure = 0
-      integer :: line_font = 0
-      integer :: level = 0
-      integer :: view = 0
-      integer :: transform_matrix = 0
-      integer :: label_disp_assoc = 0
-      integer :: status_number = 0
-      integer :: sequence_num1 = 0
-      integer :: entity_type_num2 = 0
-      integer :: line_weight = 0
-      integer :: color_number = 0
-      integer :: param_line_count = 0
-      integer :: form_number = 0
-      integer :: reserved_16 = 0
-      integer :: reserved_17 = 0
-      integer :: entity_label = 0
-      integer :: entity_subscript = 0
-      integer :: sequence_num2 = 0
+      integer(int32) :: entity_type_num1 = 0
+      integer(int32) :: parameter_data = 0
+      integer(int32) :: structure = 0
+      integer(int32) :: line_font = 0
+      integer(int32) :: level = 0
+      integer(int32) :: view = 0
+      integer(int32) :: transform_matrix = 0
+      integer(int32) :: label_disp_assoc = 0
+      integer(int32) :: status_number = 0
+      integer(int32) :: sequence_num1 = 0
+      integer(int32) :: entity_type_num2 = 0
+      integer(int32) :: line_weight = 0
+      integer(int32) :: color_number = 0
+      integer(int32) :: param_line_count = 0
+      integer(int32) :: form_number = 0
+      integer(int32) :: reserved_16 = 0
+      integer(int32) :: reserved_17 = 0
+      integer(int32) :: entity_label = 0
+      integer(int32) :: entity_subscript = 0
+      integer(int32) :: sequence_num2 = 0
    end type t_143_dir
 
    type, public :: t_143_pd
-      integer              :: Type_BS = 0
-      integer              :: SPTR = 0
-      integer              :: N = 0
-      integer, allocatable :: BDPT(:)
-      integer              :: n_PD_entries = 0
-      integer              :: Type_ID = 0
+      integer(int32)              :: Type_BS = 0
+      integer(int32)              :: SPTR = 0
+      integer(int32)              :: N = 0
+      integer(int32), allocatable :: BDPT(:)
    end type t_143_pd
 
    !! NOTE: THIS MAY NOT BE NEEDED
@@ -47,6 +45,13 @@ module type_143
       !type(t_141) :: t128_data
    end type t_143_deps
 
+   type, public :: t_143_metadata
+      integer(int32)              :: Type_ID = 0
+      character(len=4000)         :: ascii_t143_pd_data = ''
+      character(len=160)          :: ascii_t143_dir_data = ''
+      integer(int32)              :: num_PD_entries = 0
+   end type t_143_metadata
+
    type, private :: share_fileinfo_data
       integer(int32) :: fileunit
       integer(int32) :: D_section_start_index
@@ -54,16 +59,21 @@ module type_143
    end type share_fileinfo_data
 
    type, public :: t_143
-      type(t_143_dir)   :: t143dir
-      type(t_143_pd)    :: t143param
-      type(t_128)       :: dep_t128
+      type(t_143_dir)            :: t143dir
+      type(t_143_pd)             :: t143param
+      type(t_143_metadata)       :: t143metadata
       type(share_fileinfo_data)  :: t143sharedata
+      type(t_128)                :: dep_t128
+      type(t_141), allocatable   :: dep_t141(:)
    contains
       procedure :: exchange_share_data => exchange_share
       procedure :: read_t143_dir_entries => read_entries
-      procedure :: print_t143_dir_entries => print_entries
+      !procedure :: print_t143_dir_entries => print_entries
       procedure :: read_t143_pd_entries => read_pd_entries
-      procedure :: read_t128_dir_entries => read_t128_dir
+      procedure :: read_t128_data => read_t128
+      procedure :: read_t141_data => read_t141
+      procedure :: print_t143_dir_data => print_dir_data
+      procedure :: print_t143_pd_data => print_pd_data
    end type t_143
 
 contains
@@ -84,8 +94,8 @@ contains
       class(t_143), intent(inout)    :: this
       integer(int32), intent(in)     :: record_start_index
       integer(int32)                 :: D_record_num
-      integer, parameter             :: record_span = 2
-      integer, parameter             :: num_dir_entries = 20
+      integer(int32), parameter      :: record_span = 2
+      integer(int32), parameter      :: num_dir_entries = 20
       character(len=80), allocatable :: buffer(:)
       character(len=160)             :: buffer_ascii
       character(len=1)               :: type_letter1
@@ -97,9 +107,15 @@ contains
       allocate (buffer(record_span))
       do i = 1, record_span
          read (this%t143sharedata%fileunit, rec=D_record_num, fmt='(a80)') buffer(i)
-         buffer_ascii = buffer(i - 1)//buffer(i)
+         if (i < 2) then
+            buffer(i) = trim(buffer(i))
+         else
+            buffer_ascii = buffer(i - 1)//buffer(i)
+         end if
          D_record_num = D_record_num + 1
       end do
+      buffer_ascii = trim(buffer_ascii)
+      this%t143metadata%ascii_t143_dir_data = buffer_ascii
 
       read (buffer_ascii, fmt='(9i8,a1,i7,9i8,a1,i7)') &
          this%t143dir%entity_type_num1, &
@@ -153,8 +169,7 @@ contains
                    this%t143dir%param_line_count, &
                    type_id, &
                    ascii_pd_buffer)
-      ! NOTE: Future work: Include the num_pd_entries in the pd metadata
-      num_pd_entries = count_pd_entries(ascii_pd_buffer)
+      this%t143metadata%num_pd_entries = count_pd_entries(ascii_pd_buffer)
 
       read (ascii_pd_buffer, fmt=*) temp, temp, temp, this%t143param%N
       allocate (this%t143param%BDPT(this%t143param%N))
@@ -163,7 +178,7 @@ contains
       print *, trim(ascii_pd_buffer)
       ascii_pd_buffer = trim(ascii_pd_buffer)
       read (ascii_pd_buffer, fmt=*) &
-         this%t143param%Type_ID, &
+         this%t143metadata%Type_ID, &
          this%t143param%Type_BS, &
          this%t143param%SPTR, &
          this%t143param%N, &
@@ -173,14 +188,12 @@ contains
 
    end subroutine read_pd_entries
 
-   subroutine read_t128_dir(this)
+   subroutine read_t128(this)
       class(t_143), intent(inout) :: this
-      integer(int32)              :: record_start_index
       call this%dep_t128%exchange_sharedata_t128(this%t143sharedata%fileunit, &
                                                  this%t143sharedata%D_section_start_index, &
                                                  this%t143sharedata%P_section_start_index)
       call this%dep_t128%read_t128_dir_entries(this%t143param%SPTR)
-      !call this%t128dep%t128dir%print_t128_dir_entries
       call this%dep_t128%read_ascii_t128_pd
       call this%dep_t128%allocate_t128_pd_initial
       call this%dep_t128%read_t128pd_integers
@@ -188,7 +201,50 @@ contains
       call this%dep_t128%allocate_t128_pd_vectors
       call this%dep_t128%initialize_t128_pd_vectors
       call this%dep_t128%read_in_t128_pd_data
-      call this%dep_t128%print_t128_data
-   end subroutine read_t128_dir
+      call this%dep_t128%print_t128_dir_data
+      call this%dep_t128%print_t128_pd_data
+      !call this%dep_t128%print_t128_data
+   end subroutine read_t128
+
+   subroutine read_t141(this)
+      class(t_143), intent(inout) :: this
+      integer(int32) :: i
+      allocate (this%dep_t141(this%t143param%N))
+      do i = 1, this%t143param%N
+         call this%dep_t141(i)%exchange_sharedata_t141(this%t143sharedata%fileunit, &
+                                                       this%t143sharedata%D_section_start_index, &
+                                                       this%t143sharedata%P_section_start_index)
+         call this%dep_t141(i)%read_t141_dir_entries(this%t143param%BDPT(i))
+         call this%dep_t141(i)%read_ascii_t141_pd
+         call this%dep_t141(i)%read_t141pd_ints_initial
+         call this%dep_t141(i)%allocate_t141_pd_vectors
+         call this%dep_t141(i)%t141_index_calculations
+         call this%dep_t141(i)%read_t141_pd_vectors
+         call this%dep_t141(i)%print_t141_dir_data
+         call this%dep_t141(i)%print_t141_pd_data
+         call this%dep_t141(i)%read_t128_data
+         call this%dep_t141(i)%read_t126_data
+      end do
+   end subroutine read_t141
+
+   subroutine print_dir_data(this)
+      class(t_143) :: this
+      print *
+      print *, 'T143 Directory Data'
+      print *, this%t143metadata%ascii_t143_dir_data(1:80)
+      print *, this%t143metadata%ascii_t143_dir_data(81:160)
+      !print *, this%t143dir
+   end subroutine print_dir_data
+
+   subroutine print_pd_data(this)
+      class(t_143) :: this
+      print *
+      print *, 'T143 Parameter Data'
+      print *, trim(this%t143metadata%ascii_t143_pd_data)
+      print *, 'Type_BS :', this%t143param%Type_BS
+      print *, 'SPTR    :', this%t143param%SPTR
+      print *, 'N       :', this%t143param%N
+      print *, 'BDPT    :', this%t143param%BDPT
+   end subroutine print_pd_data
 
 end module type_143
